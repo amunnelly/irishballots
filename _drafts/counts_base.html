@@ -1,0 +1,177 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="http://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+g.axes g.tick text{
+  font-weight: normal;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 30px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: smaller;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+
+#quotaLine{
+    stroke: grey;
+    stroke-width: 1px;
+    stroke-dasharray: 5;
+    fill: none;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+
+{% include d3/counts/data/dublin_2024.html %}
+
+    const stack = d3.stack().keys(subgroups);
+    const stacked_data = stack(data);
+
+    // CREATE THE CANVAS AND PLOT OBJECTS
+    var canvas = d3.select('#canvas')
+    .append('svg')
+    .style('background', 'white')
+    .attr('height', height)
+    .attr('width', width)
+    
+    var plot = canvas.append('g')
+    .attr("transform", `translate(${margin.left},${margin.top})`)
+
+    // scales
+    const scaleY = d3.scaleBand().domain(groups).range([0, plot_height]).padding(0.1);
+    const scaleX = d3.scaleLinear()
+      .domain([0, xLIMIT]) //1.5e5
+      .range([0, plot_width]);
+
+    const scaleColor = d3.scaleOrdinal().domain(subgroups).range(countColors);
+
+    var bars = plot.append("g")
+  .selectAll("g")
+  .data(stacked_data)
+  .join("g")
+    .attr("fill", d => scaleColor(d.key))
+    .selectAll("rect")
+    .data(d => d)
+    .join('rect')
+      .attr('class', 'bar')
+      .attr('x', d => { return scaleX(d[0]) })
+      .attr('y', d => { return scaleY(d.data.Candidate) })
+      .attr('width', d => { return scaleX(d[1]) - scaleX(d[0]) })
+      .attr('height', d => { return  scaleY.bandwidth()});
+
+    // CREATE AND DRAW THE AXES
+    var xAx = d3.axisTop(scaleX);
+    var yAx = d3.axisLeft(scaleY);
+    
+    plot.append('g')
+    .attr("transform", `translate(0,0)`)
+    .attr('class', 'axes')
+    .call(xAx)
+    
+    plot.append('g')
+    .attr("transform",`translate(0, 0)`)
+    .attr('class', 'axes')
+    .call(yAx);
+    
+
+
+    const linedata = [{x: QUOTA, y: plot_height },{x: QUOTA, y: 0 }];
+
+    const makeLine = d3.line()
+  .x(d => { return scaleX(d.x) })
+  .y(d => { return d.y });
+
+var targetLine =   plot.append("path")
+.attr("d", makeLine(linedata))
+.attr("id", "quotaLine")
+
+// legend
+
+plot.selectAll("legend")
+    .data(subgroups)
+    .enter()
+    .append("text")
+    .attr('class', 'legend')
+    .attr("x",  plot_width+65)
+    .attr("y", (d,i)=>{return 20 + (i*20)})
+    .style("fill", function(d, i){ return countColors[i]})
+    .text(function(d){ return d})
+    .style('text-anchor', 'end')
+
+
+      var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+      function tooltipText(name, value){
+        const label = name == "1st Count" ? "Votes" : "Transfers gained";
+        return `<b>${name}</b><br>${label}: ${voteFormatter(value)}`
+      }
+    
+    bars.on("mouseover", function(e, d){
+      // 1. tooltip manifests
+      tooltip.transition().duration(250).style('opacity', 1)
+  
+      // 2.
+      const subgroupName = d3.select(this.parentNode).datum().key;
+      const subgroupValue = d.data[subgroupName];
+  
+      tooltip
+      .style("left", e.pageX + "px")
+      .style("top", e.pageY + "px")
+      .html(d=>tooltipText(subgroupName, subgroupValue));
+    })
+    .on("mouseout", function(e,d){
+      tooltip.transition().duration(150).style('opacity', 0)
+    })
+        }         
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

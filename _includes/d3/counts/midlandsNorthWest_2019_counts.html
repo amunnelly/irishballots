@@ -1,0 +1,258 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="http://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+
+g.axes g.tick text{
+  font-weight: normal;
+}
+
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+
+#quotaLine{
+    stroke: grey;
+    stroke-width: 1px;
+    stroke-dasharray: 5;
+    fill: none;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+
+            const QUOTA = 118986;
+  const xLIMIT = 1.5e5;
+  const voteFormatter = d3.format(",");
+
+            const countColors = [
+    "#1f77b4",
+    "#aec7e8",
+    "#ff7f0e",
+    "#ffbb78",
+    "#2ca02c",
+    "#98df8a",
+    "#d62728",
+    "#ff9896",
+    "#9467bd",
+    "#c5b0d5",
+    "#8c564b",
+    "#c49c94",
+    "#e377c2",
+    "#f7b6d2",
+    "#7f7f7f",
+    "#c7c7c7",
+    "#bcbd22",
+    "#dbdb8d",
+    "#17becf",
+    "#9edae5",
+  ];
+
+  // SET THE DIMENSIONS
+  const width = 900;
+  const height = 600;
+
+  const margin = { top: 50, bottom: 10, left: 175, right: 75 };
+  const plot_height = height - margin.top - margin.bottom;
+  const plot_width = width - margin.left - margin.right;
+
+  // data
+
+  const data = [{"candidate_id":"ind_diarmaid_mulcahy","Candidate":"MULCAHY, Diarmaid, Ind","1st Count":789,"2nd Count":0,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ind_james_miller","Candidate":"MILLER, James, Ind","1st Count":1322,"2nd Count":71,"3rd Count":44,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ddi_patrick_greene","Candidate":"GREENE, Patrick, DDI","1st Count":1352,"2nd Count":12,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ind_dilip_mahapatra","Candidate":"MAHAPATRA, Dilip, Ind","1st Count":2450,"2nd Count":15,"3rd Count":77,"4th Count":40,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ind_olive_o_connor","Candidate":"O'CONNOR, Olive, Ind","1st Count":3132,"2nd Count":77,"3rd Count":13,"4th Count":151,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"renua_michael_o_dowd","Candidate":"O'DOWD, Michael, Renua","1st Count":6897,"2nd Count":20,"3rd Count":84,"4th Count":141,"5th Count":232,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"sol-pbp_cyril_brennan","Candidate":"BRENNAN, Cyril, Sol-PBP","1st Count":8130,"2nd Count":20,"3rd Count":91,"4th Count":28,"5th Count":188,"6th Count":146,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"lab_dominic_hannigan","Candidate":"HANNIGAN, Dominic, Lab","1st Count":12378,"2nd Count":34,"3rd Count":85,"4th Count":47,"5th Count":211,"6th Count":315,"7th Count":366,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ind_fidelma_healy_eames","Candidate":"HEALY EAMES, Fidelma, Ind","1st Count":15991,"2nd Count":47,"3rd Count":106,"4th Count":143,"5th Count":826,"6th Count":1722,"7th Count":382,"8th Count":716,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ff_anne_rabbitte","Candidate":"RABBITTE, Anne, FF","1st Count":30220,"2nd Count":38,"3rd Count":21,"4th Count":55,"5th Count":273,"6th Count":422,"7th Count":148,"8th Count":673,"9th Count":1896,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ff_brendan_smith","Candidate":"SMITH, Brendan, FF","1st Count":42814,"2nd Count":19,"3rd Count":17,"4th Count":54,"5th Count":125,"6th Count":437,"7th Count":144,"8th Count":399,"9th Count":1585,"10th Count":17712,"11th Count":4145,"12th Count":0,"13th Count":0},{"candidate_id":"green_saoirse_mchugh","Candidate":"McHUGH, Saoirse, Green","1st Count":51019,"2nd Count":90,"3rd Count":155,"4th Count":92,"5th Count":898,"6th Count":582,"7th Count":907,"8th Count":3157,"9th Count":2136,"10th Count":1179,"11th Count":0,"12th Count":0,"13th Count":0},{"candidate_id":"ind_peter_casey","Candidate":"CASEY, Peter, Ind","1st Count":56650,"2nd Count":44,"3rd Count":142,"4th Count":178,"5th Count":390,"6th Count":1033,"7th Count":1124,"8th Count":857,"9th Count":3074,"10th Count":1875,"11th Count":3358,"12th Count":8439,"13th Count":0},{"candidate_id":"fg_maria_walsh","Candidate":"WALSH, Maria, FG","1st Count":64500,"2nd Count":83,"3rd Count":41,"4th Count":71,"5th Count":694,"6th Count":368,"7th Count":472,"8th Count":1851,"9th Count":1940,"10th Count":4282,"11th Count":15825,"12th Count":11035,"13th Count":0},{"candidate_id":"sf_matt_carthy","Candidate":"CARTHY, Matt, SF","1st Count":77619,"2nd Count":26,"3rd Count":99,"4th Count":41,"5th Count":375,"6th Count":409,"7th Count":2107,"8th Count":1377,"9th Count":930,"10th Count":974,"11th Count":6571,"12th Count":7336,"13th Count":0},{"candidate_id":"ind_luke_ming_flanagan","Candidate":"FLANAGAN, Luke 'Ming', Ind","1st Count":85034,"2nd Count":102,"3rd Count":180,"4th Count":145,"5th Count":631,"6th Count":579,"7th Count":1644,"8th Count":1560,"9th Count":2606,"10th Count":2966,"11th Count":15441,"12th Count":9064,"13th Count":0},{"candidate_id":"fg_mairead_mcguinness","Candidate":"McGUINNESS, Mairéad, FG","1st Count":134630,"2nd Count":0,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0}];
+  
+  const groups = ['McGUINNESS, Mairéad, FG', "FLANAGAN, Luke 'Ming', Ind", 'CARTHY, Matt, SF', 'WALSH, Maria, FG', 'CASEY, Peter, Ind', 'McHUGH, Saoirse, Green', 'SMITH, Brendan, FF', 'RABBITTE, Anne, FF', 'HEALY EAMES, Fidelma, Ind', 'HANNIGAN, Dominic, Lab', 'BRENNAN, Cyril, Sol-PBP', "O'DOWD, Michael, Renua", "O'CONNOR, Olive, Ind", 'MAHAPATRA, Dilip, Ind', 'GREENE, Patrick, DDI', 'MILLER, James, Ind', 'MULCAHY, Diarmaid, Ind'];
+  const subgroups = ['1st Count', '2nd Count', '3rd Count',
+       '4th Count', '5th Count', '6th Count', '7th Count', '8th Count',
+       '9th Count', '10th Count', '11th Count', '12th Count', '13th Count'];
+
+  const stack = d3.stack().keys(subgroups);
+  const stacked_data = stack(data);
+
+  // CREATE THE CANVAS AND PLOT OBJECTS
+  var canvas = d3
+    .select("#canvas")
+    .append("svg")
+    .style("background", "white")
+    .attr("height", height)
+    .attr("width", width);
+
+  var plot = canvas
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // scales
+  const scaleY = d3
+    .scaleBand()
+    .domain(groups)
+    .range([0, plot_height])
+    .padding(0.1);
+  const scaleX = d3
+    .scaleLinear()
+    .domain([0, xLIMIT]) //1.5e5
+    .range([0, plot_width]);
+
+  const scaleColor = d3.scaleOrdinal().domain(subgroups).range(countColors);
+
+  var bars = plot
+    .append("g")
+    .selectAll("g")
+    .data(stacked_data)
+    .join("g")
+    .attr("fill", (d) => scaleColor(d.key))
+    .selectAll("rect")
+    .data((d) => d)
+    .join("rect")
+    .attr("class", "bar")
+    .attr("x", (d) => {
+      return scaleX(d[0]);
+    })
+    .attr("y", (d) => {
+      return scaleY(d.data.Candidate);
+    })
+    .attr("width", (d) => {
+      return scaleX(d[1]) - scaleX(d[0]);
+    })
+    .attr("height", (d) => {
+      return scaleY.bandwidth();
+    });
+
+  // CREATE AND DRAW THE AXES
+  var xAx = d3.axisTop(scaleX);
+  var yAx = d3.axisLeft(scaleY);
+
+  plot
+    .append("g")
+    .attr("transform", `translate(0,0)`)
+    .attr("class", "axes")
+    .call(xAx);
+
+  plot
+    .append("g")
+    .attr("transform", `translate(0, 0)`)
+    .attr("class", "axes")
+    .call(yAx);
+
+  const linedata = [
+    { x: QUOTA, y: plot_height },
+    { x: QUOTA, y: 0 },
+  ];
+
+  const makeLine = d3
+    .line()
+    .x((d) => {
+      return scaleX(d.x);
+    })
+    .y((d) => {
+      return d.y;
+    });
+
+  var targetLine = plot
+    .append("path")
+    .attr("d", makeLine(linedata))
+    .attr("id", "quotaLine");
+
+  // legend
+
+  plot
+    .selectAll("legend")
+    .data(subgroups)
+    .enter()
+    .append("text")
+    .attr("class", "legend")
+    .attr("x", plot_width + 65)
+    .attr("y", (d, i) => {
+      return 20 + i * 20;
+    })
+    .style("fill", function (d, i) {
+      return countColors[i];
+    })
+    .text(function (d) {
+      return d;
+    })
+    .style("text-anchor", "end");
+
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  function tooltipText(name, value) {
+    const label = name == "1st Count" ? "Votes" : "Transfers gained";
+    return `<b>${name}</b><br>${label}: ${voteFormatter(value)}`;
+  }
+
+  bars
+    .on("mouseover", function (e, d) {
+      // 1. tooltip manifests
+      tooltip.transition().duration(250).style("opacity", 1);
+
+      // 2.
+      const subgroupName = d3.select(this.parentNode).datum().key;
+      const subgroupValue = d.data[subgroupName];
+
+      tooltip
+        .style("left", e.pageX + "px")
+        .style("top", e.pageY + "px")
+        .html((d) => tooltipText(subgroupName, subgroupValue));
+    })
+    .on("mouseout", function (e, d) {
+      tooltip.transition().duration(150).style("opacity", 0);
+    });
+
+        }         
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

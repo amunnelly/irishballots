@@ -1,0 +1,208 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="http://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+g.axes g.tick text{
+  font-weight: normal;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+
+#quotaLine{
+    stroke: grey;
+    stroke-width: 1px;
+    stroke-dasharray: 5;
+    fill: none;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+            const QUOTA = 72790;
+  const xLIMIT = 1e5;
+  const voteFormatter = d3.format(",");
+
+
+
+  const countColors = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5']
+
+    // SET THE DIMENSIONS
+    const width = 900;
+    const height = 600;
+    
+    const margin = {top: 50, bottom: 10, left: 150, right: 75}
+    const plot_height = height - margin.top - margin.bottom;
+    const plot_width = width - margin.left - margin.right;
+
+    // data
+    const data = [{"candidate_id": "green_ciaran_cuffe", "Candidate": "CUFFE, Ciarán, Green", "1st Count": 63849.0, "2nd Count": 102.0, "3rd Count": 317.0, "4th Count": 92.0, "5th Count": 182.0, "6th Count": 265.0, "7th Count": 438.0, "8th Count": 392.0, "9th Count": 687.0, "10th Count": 2912.0, "11th Count": 1973.0, "12th Count": 1773.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "fg_frances_fitzgerald", "Candidate": "FITZGERALD, Frances, FG", "1st Count": 59067.0, "2nd Count": 46.0, "3rd Count": 115.0, "4th Count": 67.0, "5th Count": 58.0, "6th Count": 73.0, "7th Count": 127.0, "8th Count": 149.0, "9th Count": 338.0, "10th Count": 1466.0, "11th Count": 352.0, "12th Count": 10566.0, "13th Count": 6134.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ff_barry_andrews", "Candidate": "ANDREWS, Barry, FF", "1st Count": 51420.0, "2nd Count": 60.0, "3rd Count": 93.0, "4th Count": 109.0, "5th Count": 205.0, "6th Count": 84.0, "7th Count": 81.0, "8th Count": 373.0, "9th Count": 708.0, "10th Count": 821.0, "11th Count": 438.0, "12th Count": 1692.0, "13th Count": 3509.0, "14th Count": 3558.0, "15th Count": 5775.0, "16th Count": 0.0}, {"candidate_id": "i4c_clare_daly", "Candidate": "DALY, Clare, I4C", "1st Count": 42305.0, "2nd Count": 47.0, "3rd Count": 142.0, "4th Count": 140.0, "5th Count": 71.0, "6th Count": 656.0, "7th Count": 759.0, "8th Count": 1411.0, "9th Count": 1280.0, "10th Count": 1709.0, "11th Count": 3823.0, "12th Count": 548.0, "13th Count": 2822.0, "14th Count": 9931.0, "15th Count": 22087.0, "16th Count": 0.0}, {"candidate_id": "sf_lynn_boylan", "Candidate": "BOYLAN, Lynn, SF", "1st Count": 39387.0, "2nd Count": 29.0, "3rd Count": 69.0, "4th Count": 120.0, "5th Count": 55.0, "6th Count": 344.0, "7th Count": 425.0, "8th Count": 1316.0, "9th Count": 531.0, "10th Count": 556.0, "11th Count": 2343.0, "12th Count": 336.0, "13th Count": 1152.0, "14th Count": 4928.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "sd_gary_gannon", "Candidate": "GANNON, Gary, SD", "1st Count": 20331.0, "2nd Count": 38.0, "3rd Count": 109.0, "4th Count": 71.0, "5th Count": 69.0, "6th Count": 355.0, "7th Count": 559.0, "8th Count": 493.0, "9th Count": 372.0, "10th Count": 1625.0, "11th Count": 1451.0, "12th Count": 413.0, "13th Count": 3805.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "lab_alex_white", "Candidate": "WHITE, Alex, Lab", "1st Count": 18293.0, "2nd Count": 38.0, "3rd Count": 64.0, "4th Count": 31.0, "5th Count": 68.0, "6th Count": 429.0, "7th Count": 146.0, "8th Count": 138.0, "9th Count": 435.0, "10th Count": 1244.0, "11th Count": 398.0, "12th Count": 902.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "fg_mark_durkan", "Candidate": "DURKAN, Mark, FG", "1st Count": 16473.0, "2nd Count": 46.0, "3rd Count": 28.0, "4th Count": 75.0, "5th Count": 67.0, "6th Count": 29.0, "7th Count": 45.0, "8th Count": 97.0, "9th Count": 269.0, "10th Count": 336.0, "11th Count": 169.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "sol-pbp_gillian_brien", "Candidate": "BRIEN, Gillian, Sol-PBP", "1st Count": 10864.0, "2nd Count": 22.0, "3rd Count": 50.0, "4th Count": 38.0, "5th Count": 30.0, "6th Count": 334.0, "7th Count": 1764.0, "8th Count": 450.0, "9th Count": 328.0, "10th Count": 446.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_alice_mary_higgins", "Candidate": "HIGGINS, Alice-Mary, Ind", "1st Count": 10846.0, "2nd Count": 40.0, "3rd Count": 138.0, "4th Count": 84.0, "5th Count": 99.0, "6th Count": 206.0, "7th Count": 317.0, "8th Count": 288.0, "9th Count": 848.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_ben_gilroy", "Candidate": "GILROY, Ben, Ind", "1st Count": 7594.0, "2nd Count": 21.0, "3rd Count": 41.0, "4th Count": 362.0, "5th Count": 399.0, "6th Count": 61.0, "7th Count": 98.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_gemma_o_doherty", "Candidate": "O'DOHERTY, Gemma, Ind", "1st Count": 6659.0, "2nd Count": 93.0, "3rd Count": 85.0, "4th Count": 727.0, "5th Count": 857.0, "6th Count": 210.0, "7th Count": 107.0, "8th Count": 1854.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "sol-pbp_rita_harrold", "Candidate": "HARROLD, Rita, Sol-PBP", "1st Count": 4967.0, "2nd Count": 29.0, "3rd Count": 60.0, "4th Count": 37.0, "5th Count": 46.0, "6th Count": 436.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "wp_eilis_ryan", "Candidate": "RYAN, Éilis, WP", "1st Count": 3701.0, "2nd Count": 23.0, "3rd Count": 39.0, "4th Count": 33.0, "5th Count": 78.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_eamonn_murphy", "Candidate": "MURPHY, Eamonn, Ind", "1st Count": 2519.0, "2nd Count": 91.0, "3rd Count": 84.0, "4th Count": 165.0, "5th Count": 0.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_hermann_kelly", "Candidate": "KELLY, Hermann, Ind", "1st Count": 2441.0, "2nd Count": 33.0, "3rd Count": 33.0, "4th Count": 0.0, "5th Count": 0.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_aisling_mcniffe", "Candidate": "McNIFFE, Aisling, Ind", "1st Count": 1572.0, "2nd Count": 49.0, "3rd Count": 0.0, "4th Count": 0.0, "5th Count": 0.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_mark_mullan", "Candidate": "MULLAN, Mark, Ind", "1st Count": 932.0, "2nd Count": 0.0, "3rd Count": 0.0, "4th Count": 0.0, "5th Count": 0.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}, {"candidate_id": "ind_tony_bosco_lowth", "Candidate": "LOWTH, Tony Bosco, Ind", "1st Count": 727.0, "2nd Count": 0.0, "3rd Count": 0.0, "4th Count": 0.0, "5th Count": 0.0, "6th Count": 0.0, "7th Count": 0.0, "8th Count": 0.0, "9th Count": 0.0, "10th Count": 0.0, "11th Count": 0.0, "12th Count": 0.0, "13th Count": 0.0, "14th Count": 0.0, "15th Count": 0.0, "16th Count": 0.0}]
+
+    const groups = ['CUFFE, Ciarán, Green', 'FITZGERALD, Frances, FG', 'ANDREWS, Barry, FF',
+       'DALY, Clare, I4C', 'BOYLAN, Lynn, SF', 'GANNON, Gary, SD',
+       'WHITE, Alex, Lab', 'DURKAN, Mark, FG', 'BRIEN, Gillian, Sol-PBP',
+       'HIGGINS, Alice-Mary, Ind', 'GILROY, Ben, Ind', 'O\'DOHERTY, Gemma, Ind',
+       'HARROLD, Rita, Sol-PBP', 'RYAN, Éilis, WP', 'MURPHY, Eamonn, Ind',
+       'KELLY, Hermann, Ind', 'McNIFFE, Aisling, Ind', 'MULLAN, Mark, Ind',
+       'LOWTH, Tony Bosco, Ind'];
+
+    const subgroups = ['1st Count', '2nd Count', '3rd Count',
+       '4th Count', '5th Count', '6th Count', '7th Count', '8th Count',
+       '9th Count', '10th Count', '11th Count', '12th Count', '13th Count',
+       '14th Count', '15th Count', '16th Count'];
+
+    const stack = d3.stack().keys(subgroups);
+    const stacked_data = stack(data);
+
+    // CREATE THE CANVAS AND PLOT OBJECTS
+    var canvas = d3.select('#canvas')
+    .append('svg')
+    .style('background', 'white')
+    .attr('height', height)
+    .attr('width', width)
+    
+    var plot = canvas.append('g')
+    .attr("transform", `translate(${margin.left},${margin.top})`)
+
+    // scales
+    const scaleY = d3.scaleBand().domain(groups).range([0, plot_height]).padding(0.1);
+    const scaleX = d3.scaleLinear()
+      .domain([0, xLIMIT]) //1.5e5
+      .range([0, plot_width]);
+
+    const scaleColor = d3.scaleOrdinal().domain(subgroups).range(countColors);
+
+    var bars = plot.append("g")
+  .selectAll("g")
+  .data(stacked_data)
+  .join("g")
+    .attr("fill", d => scaleColor(d.key))
+    .selectAll("rect")
+    .data(d => d)
+    .join('rect')
+      .attr('class', 'bar')
+      .attr('x', d => { return scaleX(d[0]) })
+      .attr('y', d => { return scaleY(d.data.Candidate) })
+      .attr('width', d => { return scaleX(d[1]) - scaleX(d[0]) })
+      .attr('height', d => { return  scaleY.bandwidth()});
+
+    // CREATE AND DRAW THE AXES
+    var xAx = d3.axisTop(scaleX);
+    var yAx = d3.axisLeft(scaleY);
+    
+    plot.append('g')
+    .attr("transform", `translate(0,0)`)
+    .attr('class', 'axes')
+    .call(xAx)
+    
+    plot.append('g')
+    .attr("transform",`translate(0, 0)`)
+    .attr('class', 'axes')
+    .call(yAx);
+    
+
+
+    const linedata = [{x: QUOTA, y: plot_height },{x: QUOTA, y: 0 }];
+
+    const makeLine = d3.line()
+  .x(d => { return scaleX(d.x) })
+  .y(d => { return d.y });
+
+var targetLine =   plot.append("path")
+.attr("d", makeLine(linedata))
+.attr("id", "quotaLine")
+
+// legend
+
+plot.selectAll("legend")
+    .data(subgroups)
+    .enter()
+    .append("text")
+    .attr('class', 'legend')
+    .attr("x",  plot_width+65)
+    .attr("y", (d,i)=>{return 20 + (i*20)})
+    .style("fill", function(d, i){ return countColors[i]})
+    .text(function(d){ return d})
+    .style('text-anchor', 'end')
+
+
+      var tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+      function tooltipText(name, value){
+        const label = name == "1st Count" ? "Votes" : "Transfers gained";
+        return `<b>${name}</b><br>${label}: ${voteFormatter(value)}`
+      }
+    
+    bars.on("mouseover", function(e, d){
+      // 1. tooltip manifests
+      tooltip.transition().duration(250).style('opacity', 1)
+  
+      // 2.
+      const subgroupName = d3.select(this.parentNode).datum().key;
+      const subgroupValue = d.data[subgroupName];
+  
+      tooltip
+      .style("left", e.pageX + "px")
+      .style("top", e.pageY + "px")
+      .html(d=>tooltipText(subgroupName, subgroupValue));
+    })
+    .on("mouseout", function(e,d){
+      tooltip.transition().duration(150).style('opacity', 0)
+    })
+        }         
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

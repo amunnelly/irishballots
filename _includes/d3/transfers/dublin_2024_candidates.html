@@ -1,0 +1,211 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="http://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+            // https://github.com/d3/d3-sankey v0.12.3 Copyright 2019 Mike Bostock
+!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("d3-array"),require("d3-shape")):"function"==typeof define&&define.amd?define(["exports","d3-array","d3-shape"],t):t((n=n||self).d3=n.d3||{},n.d3,n.d3)}(this,function(n,t,e){"use strict";function o(n){return n.target.depth}function r(n,t){return n.sourceLinks.length?n.depth:t-1}function i(n){return function(){return n}}function s(n,t){return u(n.source,t.source)||n.index-t.index}function f(n,t){return u(n.target,t.target)||n.index-t.index}function u(n,t){return n.y0-t.y0}function c(n){return n.value}function l(n){return n.index}function a(n){return n.nodes}function d(n){return n.links}function h(n,t){const e=n.get(t);if(!e)throw new Error("missing: "+t);return e}function g({nodes:n}){for(const t of n){let n=t.y0,e=n;for(const e of t.sourceLinks)e.y0=n+e.width/2,n+=e.width;for(const n of t.targetLinks)n.y1=e+n.width/2,e+=n.width}}function y(n){return[n.source.x1,n.y0]}function k(n){return[n.target.x0,n.y1]}n.sankey=function(){let n,e,o,y=0,k=0,L=1,p=1,w=24,x=8,m=l,v=r,M=a,b=d,S=6;function z(){const r={nodes:M.apply(null,arguments),links:b.apply(null,arguments)};return function({nodes:n,links:t}){for(const[t,e]of n.entries())e.index=t,e.sourceLinks=[],e.targetLinks=[];const e=new Map(n.map((t,e)=>[m(t,e,n),t]));for(const[n,o]of t.entries()){o.index=n;let{source:t,target:r}=o;"object"!=typeof t&&(t=o.source=h(e,t)),"object"!=typeof r&&(r=o.target=h(e,r)),t.sourceLinks.push(o),r.targetLinks.push(o)}if(null!=o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(o),e.sort(o)}(r),function({nodes:n}){for(const e of n)e.value=void 0===e.fixedValue?Math.max(t.sum(e.sourceLinks,c),t.sum(e.targetLinks,c)):e.fixedValue}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.depth=r;for(const{target:t}of n.sourceLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.height=r;for(const{source:t}of n.targetLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function(o){const r=function({nodes:n}){const o=t.max(n,n=>n.depth)+1,r=(L-y-w)/(o-1),i=new Array(o);for(const t of n){const n=Math.max(0,Math.min(o-1,Math.floor(v.call(null,t,o))));t.layer=n,t.x0=y+n*r,t.x1=t.x0+w,i[n]?i[n].push(t):i[n]=[t]}if(e)for(const n of i)n.sort(e);return i}(o);n=Math.min(x,(p-k)/(t.max(r,n=>n.length)-1)),function(e){const o=t.min(e,e=>(p-k-(e.length-1)*n)/t.sum(e,c));for(const t of e){let e=k;for(const r of t){r.y0=e,r.y1=e+r.value*o,e=r.y1+n;for(const n of r.sourceLinks)n.width=n.value*o}e=(p-e+n)/(t.length+1);for(let n=0;n<t.length;++n){const o=t[n];o.y0+=e*(n+1),o.y1+=e*(n+1)}V(t)}}(r);for(let n=0;n<S;++n){const t=Math.pow(.99,n),e=Math.max(1-t,(n+1)/S);E(r,t,e),j(r,t,e)}}(r),g(r),r}function j(n,t,o){for(let r=1,i=n.length;r<i;++r){const i=n[r];for(const n of i){let e=0,o=0;for(const{source:t,value:r}of n.targetLinks){let i=r*(n.layer-t.layer);e+=_(t,n)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function E(n,t,o){for(let r=n.length-2;r>=0;--r){const i=n[r];for(const n of i){let e=0,o=0;for(const{target:t,value:r}of n.sourceLinks){let i=r*(t.layer-n.layer);e+=C(n,t)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function q(t,e){const o=t.length>>1,r=t[o];H(t,r.y0-n,o-1,e),A(t,r.y1+n,o+1,e),H(t,p,t.length-1,e),A(t,k,0,e)}function A(t,e,o,r){for(;o<t.length;++o){const i=t[o],s=(e-i.y0)*r;s>1e-6&&(i.y0+=s,i.y1+=s),e=i.y1+n}}function H(t,e,o,r){for(;o>=0;--o){const i=t[o],s=(i.y1-e)*r;s>1e-6&&(i.y0-=s,i.y1-=s),e=i.y0-n}}function P({sourceLinks:n,targetLinks:t}){if(void 0===o){for(const{source:{sourceLinks:n}}of t)n.sort(f);for(const{target:{targetLinks:t}}of n)t.sort(s)}}function V(n){if(void 0===o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(f),e.sort(s)}function _(t,e){let o=t.y0-(t.sourceLinks.length-1)*n/2;for(const{target:r,width:i}of t.sourceLinks){if(r===e)break;o+=i+n}for(const{source:n,width:r}of e.targetLinks){if(n===t)break;o-=r}return o}function C(t,e){let o=e.y0-(e.targetLinks.length-1)*n/2;for(const{source:r,width:i}of e.targetLinks){if(r===t)break;o+=i+n}for(const{target:n,width:r}of t.sourceLinks){if(n===e)break;o-=r}return o}return z.update=function(n){return g(n),n},z.nodeId=function(n){return arguments.length?(m="function"==typeof n?n:i(n),z):m},z.nodeAlign=function(n){return arguments.length?(v="function"==typeof n?n:i(n),z):v},z.nodeSort=function(n){return arguments.length?(e=n,z):e},z.nodeWidth=function(n){return arguments.length?(w=+n,z):w},z.nodePadding=function(t){return arguments.length?(x=n=+t,z):x},z.nodes=function(n){return arguments.length?(M="function"==typeof n?n:i(n),z):M},z.links=function(n){return arguments.length?(b="function"==typeof n?n:i(n),z):b},z.linkSort=function(n){return arguments.length?(o=n,z):o},z.size=function(n){return arguments.length?(y=k=0,L=+n[0],p=+n[1],z):[L-y,p-k]},z.extent=function(n){return arguments.length?(y=+n[0][0],L=+n[1][0],k=+n[0][1],p=+n[1][1],z):[[y,k],[L,p]]},z.iterations=function(n){return arguments.length?(S=+n,z):S},z},n.sankeyCenter=function(n){return n.targetLinks.length?n.depth:n.sourceLinks.length?t.min(n.sourceLinks,o)-1:0},n.sankeyJustify=r,n.sankeyLeft=function(n){return n.depth},n.sankeyLinkHorizontal=function(){return e.linkHorizontal().source(y).target(k)},n.sankeyRight=function(n,t){return t-1-n.height},Object.defineProperty(n,"__esModule",{value:!0})});
+
+// plot dimensions
+  const width = 850;
+  const height = 500;
+  const margin = { top: 10, right: 50, bottom: 25, left: 50 };
+
+const data = {"nodes": [{"id": 0, "label": "ind_conor_murphy"}, {"id": 1, "label": "ind_eamonn_murphy"}, {"id": 2, "label": "tip_andy_heasman"}, {"id": 3, "label": "ind_stephen_o_rourke"}, {"id": 4, "label": "ind_robin_cafolla"}, {"id": 5, "label": "np_patrick_quinlan"}, {"id": 6, "label": "np_rebecca_barrett"}, {"id": 7, "label": "ind_brendan_ogle"}, {"id": 8, "label": "ifp_diarmaid_o_conarain"}, {"id": 9, "label": "ind_umar_al_qadri"}, {"id": 10, "label": "if_philip_dwyer"}, {"id": 11, "label": "ind_malachy_steenson"}, {"id": 12, "label": "sf_daithi_doolan"}, {"id": 13, "label": "aontú_aisling_considine"}, {"id": 14, "label": "sd_sinead_gibney"}, {"id": 15, "label": "pbp-sol_brid_smith"}, {"id": 16, "label": "i4c_clare_daly"}, {"id": 17, "label": "green_ciaran_cuffe"}, {"id": 18, "label": "ff_barry_andrews"}, {"id": 19, "label": "fg_regina_doherty"}, {"id": 20, "label": "sf_lynn_boylan"}, {"id": 21, "label": "green_ciaran_cuffe"}, {"id": 22, "label": "lab_aodhan_o_riordain"}, {"id": 23, "label": "ii_niall_boylan"}, {"id": 24, "label": "i4c_clare_daly"}, {"id": 25, "label": "pbp-sol_brid_smith"}, {"id": 26, "label": "sd_sinead_gibney"}, {"id": 27, "label": "sf_daithi_doolan"}, {"id": 28, "label": "aontú_aisling_considine"}, {"id": 29, "label": "ind_malachy_steenson"}, {"id": 30, "label": "ind_umar_al_qadri"}, {"id": 31, "label": "if_philip_dwyer"}, {"id": 32, "label": "ifp_diarmaid_o_conarain"}, {"id": 33, "label": "ind_brendan_ogle"}, {"id": 34, "label": "np_rebecca_barrett"}, {"id": 35, "label": "np_patrick_quinlan"}, {"id": 36, "label": "ind_robin_cafolla"}, {"id": 37, "label": "ind_stephen_o_rourke"}, {"id": 38, "label": "tip_andy_heasman"}, {"id": 39, "label": "ind_eamonn_murphy"}, {"id": 40, "label": "ind_conor_murphy"}], "links": [{"source": 0, "target": 18, "value": 58.0, "share": 0.05}, {"source": 0, "target": 19, "value": 36.0, "share": 0.03}, {"source": 0, "target": 20, "value": 14.0, "share": 0.01}, {"source": 0, "target": 21, "value": 16.0, "share": 0.02}, {"source": 0, "target": 22, "value": 36.0, "share": 0.03}, {"source": 0, "target": 23, "value": 33.0, "share": 0.03}, {"source": 0, "target": 24, "value": 38.0, "share": 0.04}, {"source": 0, "target": 25, "value": 34.0, "share": 0.03}, {"source": 0, "target": 26, "value": 19.0, "share": 0.02}, {"source": 0, "target": 27, "value": 16.0, "share": 0.02}, {"source": 0, "target": 28, "value": 36.0, "share": 0.03}, {"source": 0, "target": 29, "value": 68.0, "share": 0.06}, {"source": 0, "target": 30, "value": 30.0, "share": 0.03}, {"source": 0, "target": 31, "value": 12.0, "share": 0.01}, {"source": 0, "target": 32, "value": 42.0, "share": 0.04}, {"source": 0, "target": 33, "value": 133.0, "share": 0.12}, {"source": 0, "target": 34, "value": 7.0, "share": 0.01}, {"source": 0, "target": 35, "value": 9.0, "share": 0.01}, {"source": 0, "target": 36, "value": 28.0, "share": 0.03}, {"source": 0, "target": 37, "value": 87.0, "share": 0.08}, {"source": 0, "target": 38, "value": 29.0, "share": 0.03}, {"source": 0, "target": 39, "value": 156.0, "share": 0.15}, {"source": 1, "target": 18, "value": 63.0, "share": 0.04}, {"source": 1, "target": 19, "value": 46.0, "share": 0.03}, {"source": 1, "target": 20, "value": 34.0, "share": 0.02}, {"source": 1, "target": 21, "value": 24.0, "share": 0.01}, {"source": 1, "target": 22, "value": 43.0, "share": 0.03}, {"source": 1, "target": 23, "value": 67.0, "share": 0.04}, {"source": 1, "target": 24, "value": 59.0, "share": 0.03}, {"source": 1, "target": 25, "value": 43.0, "share": 0.03}, {"source": 1, "target": 26, "value": 20.0, "share": 0.01}, {"source": 1, "target": 27, "value": 20.0, "share": 0.01}, {"source": 1, "target": 28, "value": 369.0, "share": 0.22}, {"source": 1, "target": 29, "value": 185.0, "share": 0.11}, {"source": 1, "target": 30, "value": 26.0, "share": 0.02}, {"source": 1, "target": 31, "value": 45.0, "share": 0.03}, {"source": 1, "target": 32, "value": 71.0, "share": 0.04}, {"source": 1, "target": 33, "value": 137.0, "share": 0.08}, {"source": 1, "target": 34, "value": 29.0, "share": 0.02}, {"source": 1, "target": 35, "value": 38.0, "share": 0.02}, {"source": 1, "target": 36, "value": 34.0, "share": 0.02}, {"source": 1, "target": 37, "value": 76.0, "share": 0.04}, {"source": 1, "target": 38, "value": 35.0, "share": 0.02}, {"source": 1, "target": 40, "value": 0.0, "share": null}, {"source": 2, "target": 18, "value": 30.0, "share": 0.01}, {"source": 2, "target": 19, "value": 21.0, "share": 0.01}, {"source": 2, "target": 20, "value": 56.0, "share": 0.03}, {"source": 2, "target": 21, "value": 21.0, "share": 0.01}, {"source": 2, "target": 22, "value": 32.0, "share": 0.02}, {"source": 2, "target": 23, "value": 144.0, "share": 0.07}, {"source": 2, "target": 24, "value": 104.0, "share": 0.05}, {"source": 2, "target": 25, "value": 97.0, "share": 0.05}, {"source": 2, "target": 26, "value": 38.0, "share": 0.02}, {"source": 2, "target": 28, "value": 65.0, "share": 0.03}, {"source": 2, "target": 27, "value": 64.0, "share": 0.03}, {"source": 2, "target": 29, "value": 99.0, "share": 0.05}, {"source": 2, "target": 30, "value": 11.0, "share": 0.01}, {"source": 2, "target": 31, "value": 234.0, "share": 0.11}, {"source": 2, "target": 32, "value": 442.0, "share": 0.21}, {"source": 2, "target": 33, "value": 88.0, "share": 0.04}, {"source": 2, "target": 34, "value": 63.0, "share": 0.03}, {"source": 2, "target": 35, "value": 143.0, "share": 0.07}, {"source": 2, "target": 36, "value": 34.0, "share": 0.02}, {"source": 2, "target": 37, "value": 62.0, "share": 0.03}, {"source": 2, "target": 40, "value": 0.0, "share": null}, {"source": 2, "target": 39, "value": 0.0, "share": null}, {"source": 3, "target": 18, "value": 70.0, "share": 0.03}, {"source": 3, "target": 19, "value": 78.0, "share": 0.03}, {"source": 3, "target": 20, "value": 65.0, "share": 0.03}, {"source": 3, "target": 21, "value": 48.0, "share": 0.02}, {"source": 3, "target": 23, "value": 157.0, "share": 0.06}, {"source": 3, "target": 22, "value": 100.0, "share": 0.04}, {"source": 3, "target": 24, "value": 112.0, "share": 0.05}, {"source": 3, "target": 25, "value": 205.0, "share": 0.08}, {"source": 3, "target": 26, "value": 91.0, "share": 0.04}, {"source": 3, "target": 28, "value": 85.0, "share": 0.03}, {"source": 3, "target": 27, "value": 67.0, "share": 0.03}, {"source": 3, "target": 29, "value": 293.0, "share": 0.12}, {"source": 3, "target": 30, "value": 112.0, "share": 0.05}, {"source": 3, "target": 31, "value": 44.0, "share": 0.02}, {"source": 3, "target": 32, "value": 100.0, "share": 0.04}, {"source": 3, "target": 33, "value": 227.0, "share": 0.09}, {"source": 3, "target": 34, "value": 34.0, "share": 0.01}, {"source": 3, "target": 35, "value": 65.0, "share": 0.03}, {"source": 3, "target": 36, "value": 113.0, "share": 0.05}, {"source": 3, "target": 40, "value": 0.0, "share": null}, {"source": 3, "target": 39, "value": 0.0, "share": null}, {"source": 3, "target": 38, "value": 0.0, "share": null}, {"source": 4, "target": 18, "value": 66.0, "share": 0.02}, {"source": 4, "target": 19, "value": 79.0, "share": 0.03}, {"source": 4, "target": 20, "value": 107.0, "share": 0.04}, {"source": 4, "target": 21, "value": 451.0, "share": 0.17}, {"source": 4, "target": 23, "value": 91.0, "share": 0.03}, {"source": 4, "target": 22, "value": 139.0, "share": 0.05}, {"source": 4, "target": 24, "value": 260.0, "share": 0.1}, {"source": 4, "target": 25, "value": 326.0, "share": 0.12}, {"source": 4, "target": 26, "value": 321.0, "share": 0.12}, {"source": 4, "target": 28, "value": 92.0, "share": 0.03}, {"source": 4, "target": 27, "value": 40.0, "share": 0.01}, {"source": 4, "target": 29, "value": 60.0, "share": 0.02}, {"source": 4, "target": 30, "value": 137.0, "share": 0.05}, {"source": 4, "target": 31, "value": 42.0, "share": 0.02}, {"source": 4, "target": 32, "value": 25.0, "share": 0.01}, {"source": 4, "target": 33, "value": 184.0, "share": 0.07}, {"source": 4, "target": 34, "value": 49.0, "share": 0.02}, {"source": 4, "target": 35, "value": 12.0, "share": null}, {"source": 4, "target": 40, "value": 0.0, "share": null}, {"source": 4, "target": 39, "value": 0.0, "share": null}, {"source": 4, "target": 37, "value": 0.0, "share": null}, {"source": 4, "target": 38, "value": 0.0, "share": null}, {"source": 5, "target": 18, "value": 29.0, "share": 0.01}, {"source": 5, "target": 19, "value": 23.0, "share": 0.01}, {"source": 5, "target": 20, "value": 51.0, "share": 0.02}, {"source": 5, "target": 21, "value": 12.0, "share": null}, {"source": 5, "target": 23, "value": 227.0, "share": 0.08}, {"source": 5, "target": 22, "value": 41.0, "share": 0.01}, {"source": 5, "target": 24, "value": 72.0, "share": 0.03}, {"source": 5, "target": 25, "value": 102.0, "share": 0.04}, {"source": 5, "target": 26, "value": 13.0, "share": null}, {"source": 5, "target": 28, "value": 78.0, "share": 0.03}, {"source": 5, "target": 27, "value": 50.0, "share": 0.02}, {"source": 5, "target": 29, "value": 319.0, "share": 0.11}, {"source": 5, "target": 30, "value": 9.0, "share": null}, {"source": 5, "target": 31, "value": 350.0, "share": 0.12}, {"source": 5, "target": 32, "value": 428.0, "share": 0.15}, {"source": 5, "target": 33, "value": 76.0, "share": 0.03}, {"source": 5, "target": 34, "value": 729.0, "share": 0.25}, {"source": 5, "target": 40, "value": 0.0, "share": null}, {"source": 5, "target": 39, "value": 0.0, "share": null}, {"source": 5, "target": 36, "value": 0.0, "share": null}, {"source": 5, "target": 37, "value": 0.0, "share": null}, {"source": 5, "target": 38, "value": 0.0, "share": null}, {"source": 6, "target": 18, "value": 138.0, "share": 0.04}, {"source": 6, "target": 19, "value": 97.0, "share": 0.02}, {"source": 6, "target": 20, "value": 335.0, "share": 0.09}, {"source": 6, "target": 21, "value": 69.0, "share": 0.02}, {"source": 6, "target": 23, "value": 689.0, "share": 0.18}, {"source": 6, "target": 22, "value": 49.0, "share": 0.01}, {"source": 6, "target": 24, "value": 194.0, "share": 0.05}, {"source": 6, "target": 25, "value": 75.0, "share": 0.02}, {"source": 6, "target": 26, "value": 67.0, "share": 0.02}, {"source": 6, "target": 28, "value": 493.0, "share": 0.13}, {"source": 6, "target": 27, "value": 70.0, "share": 0.02}, {"source": 6, "target": 29, "value": 155.0, "share": 0.04}, {"source": 6, "target": 31, "value": 397.0, "share": 0.1}, {"source": 6, "target": 30, "value": 89.0, "share": 0.02}, {"source": 6, "target": 32, "value": 369.0, "share": 0.09}, {"source": 6, "target": 33, "value": 59.0, "share": 0.02}, {"source": 6, "target": 40, "value": 0.0, "share": null}, {"source": 6, "target": 39, "value": 0.0, "share": null}, {"source": 6, "target": 36, "value": 0.0, "share": null}, {"source": 6, "target": 37, "value": 0.0, "share": null}, {"source": 6, "target": 35, "value": 0.0, "share": null}, {"source": 6, "target": 38, "value": 0.0, "share": null}, {"source": 7, "target": 18, "value": 140.0, "share": 0.03}, {"source": 7, "target": 19, "value": 114.0, "share": 0.03}, {"source": 7, "target": 20, "value": 219.0, "share": 0.05}, {"source": 7, "target": 21, "value": 210.0, "share": 0.05}, {"source": 7, "target": 23, "value": 174.0, "share": 0.04}, {"source": 7, "target": 22, "value": 373.0, "share": 0.09}, {"source": 7, "target": 24, "value": 356.0, "share": 0.09}, {"source": 7, "target": 25, "value": 504.0, "share": 0.12}, {"source": 7, "target": 26, "value": 228.0, "share": 0.06}, {"source": 7, "target": 28, "value": 105.0, "share": 0.03}, {"source": 7, "target": 27, "value": 111.0, "share": 0.03}, {"source": 7, "target": 29, "value": 506.0, "share": 0.12}, {"source": 7, "target": 31, "value": 72.0, "share": 0.02}, {"source": 7, "target": 30, "value": 172.0, "share": 0.04}, {"source": 7, "target": 32, "value": 137.0, "share": 0.03}, {"source": 7, "target": 40, "value": 0.0, "share": null}, {"source": 7, "target": 39, "value": 0.0, "share": null}, {"source": 7, "target": 36, "value": 0.0, "share": null}, {"source": 7, "target": 37, "value": 0.0, "share": null}, {"source": 7, "target": 35, "value": 0.0, "share": null}, {"source": 7, "target": 34, "value": 0.0, "share": null}, {"source": 7, "target": 38, "value": 0.0, "share": null}, {"source": 8, "target": 18, "value": 43.0, "share": 0.01}, {"source": 8, "target": 19, "value": 40.0, "share": 0.01}, {"source": 8, "target": 20, "value": 185.0, "share": 0.04}, {"source": 8, "target": 21, "value": 40.0, "share": 0.01}, {"source": 8, "target": 23, "value": 834.0, "share": 0.16}, {"source": 8, "target": 22, "value": 116.0, "share": 0.02}, {"source": 8, "target": 24, "value": 275.0, "share": 0.05}, {"source": 8, "target": 25, "value": 269.0, "share": 0.05}, {"source": 8, "target": 26, "value": 60.0, "share": 0.01}, {"source": 8, "target": 28, "value": 369.0, "share": 0.07}, {"source": 8, "target": 27, "value": 175.0, "share": 0.03}, {"source": 8, "target": 29, "value": 653.0, "share": 0.13}, {"source": 8, "target": 31, "value": 1001.0, "share": 0.19}, {"source": 8, "target": 30, "value": 36.0, "share": 0.01}, {"source": 8, "target": 33, "value": 0.0, "share": null}, {"source": 8, "target": 40, "value": 0.0, "share": null}, {"source": 8, "target": 39, "value": 0.0, "share": null}, {"source": 8, "target": 36, "value": 0.0, "share": null}, {"source": 8, "target": 37, "value": 0.0, "share": null}, {"source": 8, "target": 35, "value": 0.0, "share": null}, {"source": 8, "target": 34, "value": 0.0, "share": null}, {"source": 8, "target": 38, "value": 0.0, "share": null}, {"source": 9, "target": 18, "value": 888.0, "share": 0.17}, {"source": 9, "target": 19, "value": 431.0, "share": 0.08}, {"source": 9, "target": 20, "value": 483.0, "share": 0.09}, {"source": 9, "target": 21, "value": 527.0, "share": 0.1}, {"source": 9, "target": 23, "value": 362.0, "share": 0.07}, {"source": 9, "target": 22, "value": 313.0, "share": 0.06}, {"source": 9, "target": 24, "value": 339.0, "share": 0.06}, {"source": 9, "target": 25, "value": 281.0, "share": 0.05}, {"source": 9, "target": 26, "value": 293.0, "share": 0.05}, {"source": 9, "target": 28, "value": 239.0, "share": 0.04}, {"source": 9, "target": 27, "value": 100.0, "share": 0.02}, {"source": 9, "target": 29, "value": 173.0, "share": 0.03}, {"source": 9, "target": 31, "value": 29.0, "share": 0.01}, {"source": 9, "target": 32, "value": 0.0, "share": null}, {"source": 9, "target": 33, "value": 0.0, "share": null}, {"source": 9, "target": 40, "value": 0.0, "share": null}, {"source": 9, "target": 39, "value": 0.0, "share": null}, {"source": 9, "target": 36, "value": 0.0, "share": null}, {"source": 9, "target": 37, "value": 0.0, "share": null}, {"source": 9, "target": 35, "value": 0.0, "share": null}, {"source": 9, "target": 34, "value": 0.0, "share": null}, {"source": 9, "target": 38, "value": 0.0, "share": null}, {"source": 10, "target": 18, "value": 68.0, "share": 0.01}, {"source": 10, "target": 19, "value": 80.0, "share": 0.01}, {"source": 10, "target": 20, "value": 119.0, "share": 0.02}, {"source": 10, "target": 21, "value": 46.0, "share": 0.01}, {"source": 10, "target": 23, "value": 1706.0, "share": 0.25}, {"source": 10, "target": 22, "value": 71.0, "share": 0.01}, {"source": 10, "target": 24, "value": 358.0, "share": 0.05}, {"source": 10, "target": 25, "value": 233.0, "share": 0.03}, {"source": 10, "target": 26, "value": 71.0, "share": 0.01}, {"source": 10, "target": 28, "value": 430.0, "share": 0.06}, {"source": 10, "target": 27, "value": 125.0, "share": 0.02}, {"source": 10, "target": 29, "value": 1844.0, "share": 0.28}, {"source": 10, "target": 32, "value": 0.0, "share": null}, {"source": 10, "target": 33, "value": 0.0, "share": null}, {"source": 10, "target": 40, "value": 0.0, "share": null}, {"source": 10, "target": 39, "value": 0.0, "share": null}, {"source": 10, "target": 36, "value": 0.0, "share": null}, {"source": 10, "target": 37, "value": 0.0, "share": null}, {"source": 10, "target": 30, "value": 0.0, "share": null}, {"source": 10, "target": 35, "value": 0.0, "share": null}, {"source": 10, "target": 34, "value": 0.0, "share": null}, {"source": 10, "target": 38, "value": 0.0, "share": null}, {"source": 11, "target": 18, "value": 126.0, "share": 0.01}, {"source": 11, "target": 19, "value": 120.0, "share": 0.01}, {"source": 11, "target": 20, "value": 388.0, "share": 0.03}, {"source": 11, "target": 23, "value": 4494.0, "share": 0.39}, {"source": 11, "target": 21, "value": 69.0, "share": 0.01}, {"source": 11, "target": 22, "value": 207.0, "share": 0.02}, {"source": 11, "target": 24, "value": 737.0, "share": 0.06}, {"source": 11, "target": 25, "value": 538.0, "share": 0.05}, {"source": 11, "target": 26, "value": 139.0, "share": 0.01}, {"source": 11, "target": 28, "value": 849.0, "share": 0.07}, {"source": 11, "target": 27, "value": 218.0, "share": 0.02}, {"source": 11, "target": 31, "value": 0.0, "share": null}, {"source": 11, "target": 32, "value": 0.0, "share": null}, {"source": 11, "target": 33, "value": 0.0, "share": null}, {"source": 11, "target": 40, "value": 0.0, "share": null}, {"source": 11, "target": 39, "value": 0.0, "share": null}, {"source": 11, "target": 36, "value": 0.0, "share": null}, {"source": 11, "target": 37, "value": 0.0, "share": null}, {"source": 11, "target": 30, "value": 0.0, "share": null}, {"source": 11, "target": 35, "value": 0.0, "share": null}, {"source": 11, "target": 34, "value": 0.0, "share": null}, {"source": 11, "target": 38, "value": 0.0, "share": null}, {"source": 12, "target": 18, "value": 236.0, "share": 0.02}, {"source": 12, "target": 19, "value": 229.0, "share": 0.02}, {"source": 12, "target": 23, "value": 397.0, "share": 0.03}, {"source": 12, "target": 20, "value": 7498.0, "share": 0.63}, {"source": 12, "target": 21, "value": 163.0, "share": 0.01}, {"source": 12, "target": 22, "value": 304.0, "share": 0.03}, {"source": 12, "target": 24, "value": 408.0, "share": 0.03}, {"source": 12, "target": 25, "value": 938.0, "share": 0.08}, {"source": 12, "target": 26, "value": 219.0, "share": 0.02}, {"source": 12, "target": 28, "value": 214.0, "share": 0.02}, {"source": 12, "target": 31, "value": 0.0, "share": null}, {"source": 12, "target": 32, "value": 0.0, "share": null}, {"source": 12, "target": 33, "value": 0.0, "share": null}, {"source": 12, "target": 40, "value": 0.0, "share": null}, {"source": 12, "target": 39, "value": 0.0, "share": null}, {"source": 12, "target": 29, "value": 0.0, "share": null}, {"source": 12, "target": 36, "value": 0.0, "share": null}, {"source": 12, "target": 37, "value": 0.0, "share": null}, {"source": 12, "target": 30, "value": 0.0, "share": null}, {"source": 12, "target": 35, "value": 0.0, "share": null}, {"source": 12, "target": 34, "value": 0.0, "share": null}, {"source": 12, "target": 38, "value": 0.0, "share": null}, {"source": 13, "target": 18, "value": 1065.0, "share": 0.08}, {"source": 13, "target": 19, "value": 934.0, "share": 0.07}, {"source": 13, "target": 20, "value": 795.0, "share": 0.06}, {"source": 13, "target": 23, "value": 3223.0, "share": 0.23}, {"source": 13, "target": 21, "value": 735.0, "share": 0.05}, {"source": 13, "target": 22, "value": 413.0, "share": 0.03}, {"source": 13, "target": 24, "value": 1221.0, "share": 0.09}, {"source": 13, "target": 25, "value": 537.0, "share": 0.04}, {"source": 13, "target": 26, "value": 498.0, "share": 0.04}, {"source": 13, "target": 31, "value": 0.0, "share": null}, {"source": 13, "target": 32, "value": 0.0, "share": null}, {"source": 13, "target": 33, "value": 0.0, "share": null}, {"source": 13, "target": 40, "value": 0.0, "share": null}, {"source": 13, "target": 39, "value": 0.0, "share": null}, {"source": 13, "target": 29, "value": 0.0, "share": null}, {"source": 13, "target": 36, "value": 0.0, "share": null}, {"source": 13, "target": 37, "value": 0.0, "share": null}, {"source": 13, "target": 30, "value": 0.0, "share": null}, {"source": 13, "target": 35, "value": 0.0, "share": null}, {"source": 13, "target": 34, "value": 0.0, "share": null}, {"source": 13, "target": 27, "value": 0.0, "share": null}, {"source": 13, "target": 38, "value": 0.0, "share": null}, {"source": 14, "target": 18, "value": 1059.0, "share": 0.06}, {"source": 14, "target": 19, "value": 1476.0, "share": 0.08}, {"source": 14, "target": 20, "value": 1569.0, "share": 0.09}, {"source": 14, "target": 23, "value": 407.0, "share": 0.02}, {"source": 14, "target": 21, "value": 3207.0, "share": 0.17}, {"source": 14, "target": 22, "value": 4433.0, "share": 0.24}, {"source": 14, "target": 24, "value": 1482.0, "share": 0.08}, {"source": 14, "target": 25, "value": 3013.0, "share": 0.16}, {"source": 14, "target": 28, "value": 0.0, "share": null}, {"source": 14, "target": 31, "value": 0.0, "share": null}, {"source": 14, "target": 32, "value": 0.0, "share": null}, {"source": 14, "target": 33, "value": 0.0, "share": null}, {"source": 14, "target": 40, "value": 0.0, "share": null}, {"source": 14, "target": 39, "value": 0.0, "share": null}, {"source": 14, "target": 29, "value": 0.0, "share": null}, {"source": 14, "target": 36, "value": 0.0, "share": null}, {"source": 14, "target": 37, "value": 0.0, "share": null}, {"source": 14, "target": 30, "value": 0.0, "share": null}, {"source": 14, "target": 35, "value": 0.0, "share": null}, {"source": 14, "target": 34, "value": 0.0, "share": null}, {"source": 14, "target": 27, "value": 0.0, "share": null}, {"source": 14, "target": 38, "value": 0.0, "share": null}, {"source": 15, "target": 18, "value": 953.0, "share": 0.03}, {"source": 15, "target": 19, "value": 1381.0, "share": 0.05}, {"source": 15, "target": 20, "value": 5899.0, "share": 0.21}, {"source": 15, "target": 23, "value": 1290.0, "share": 0.04}, {"source": 15, "target": 21, "value": 2551.0, "share": 0.09}, {"source": 15, "target": 22, "value": 4508.0, "share": 0.16}, {"source": 15, "target": 24, "value": 6464.0, "share": 0.22}, {"source": 15, "target": 28, "value": 0.0, "share": null}, {"source": 15, "target": 31, "value": 0.0, "share": null}, {"source": 15, "target": 32, "value": 0.0, "share": null}, {"source": 15, "target": 33, "value": 0.0, "share": null}, {"source": 15, "target": 40, "value": 0.0, "share": null}, {"source": 15, "target": 39, "value": 0.0, "share": null}, {"source": 15, "target": 29, "value": 0.0, "share": null}, {"source": 15, "target": 36, "value": 0.0, "share": null}, {"source": 15, "target": 37, "value": 0.0, "share": null}, {"source": 15, "target": 30, "value": 0.0, "share": null}, {"source": 15, "target": 35, "value": 0.0, "share": null}, {"source": 15, "target": 34, "value": 0.0, "share": null}, {"source": 15, "target": 26, "value": 0.0, "share": null}, {"source": 15, "target": 27, "value": 0.0, "share": null}, {"source": 15, "target": 38, "value": 0.0, "share": null}, {"source": 16, "target": 18, "value": 1931.0, "share": 0.05}, {"source": 16, "target": 19, "value": 2196.0, "share": 0.06}, {"source": 16, "target": 20, "value": 11338.0, "share": 0.29}, {"source": 16, "target": 23, "value": 4558.0, "share": 0.12}, {"source": 16, "target": 22, "value": 5001.0, "share": 0.13}, {"source": 16, "target": 21, "value": 3189.0, "share": 0.08}, {"source": 16, "target": 28, "value": 0.0, "share": null}, {"source": 16, "target": 31, "value": 0.0, "share": null}, {"source": 16, "target": 32, "value": 0.0, "share": null}, {"source": 16, "target": 33, "value": 0.0, "share": null}, {"source": 16, "target": 40, "value": 0.0, "share": null}, {"source": 16, "target": 39, "value": 0.0, "share": null}, {"source": 16, "target": 29, "value": 0.0, "share": null}, {"source": 16, "target": 36, "value": 0.0, "share": null}, {"source": 16, "target": 37, "value": 0.0, "share": null}, {"source": 16, "target": 30, "value": 0.0, "share": null}, {"source": 16, "target": 35, "value": 0.0, "share": null}, {"source": 16, "target": 34, "value": 0.0, "share": null}, {"source": 16, "target": 25, "value": 0.0, "share": null}, {"source": 16, "target": 26, "value": 0.0, "share": null}, {"source": 16, "target": 27, "value": 0.0, "share": null}, {"source": 16, "target": 38, "value": 0.0, "share": null}, {"source": 17, "target": 18, "value": 7771.0, "share": 0.18}, {"source": 17, "target": 19, "value": 8717.0, "share": 0.2}, {"source": 17, "target": 20, "value": 3649.0, "share": 0.08}, {"source": 17, "target": 23, "value": 926.0, "share": 0.02}, {"source": 17, "target": 22, "value": 16614.0, "share": 0.38}, {"source": 17, "target": 28, "value": 0.0, "share": null}, {"source": 17, "target": 24, "value": 0.0, "share": null}, {"source": 17, "target": 31, "value": 0.0, "share": null}, {"source": 17, "target": 32, "value": 0.0, "share": null}, {"source": 17, "target": 33, "value": 0.0, "share": null}, {"source": 17, "target": 40, "value": 0.0, "share": null}, {"source": 17, "target": 39, "value": 0.0, "share": null}, {"source": 17, "target": 29, "value": 0.0, "share": null}, {"source": 17, "target": 36, "value": 0.0, "share": null}, {"source": 17, "target": 37, "value": 0.0, "share": null}, {"source": 17, "target": 30, "value": 0.0, "share": null}, {"source": 17, "target": 35, "value": 0.0, "share": null}, {"source": 17, "target": 34, "value": 0.0, "share": null}, {"source": 17, "target": 25, "value": 0.0, "share": null}, {"source": 17, "target": 26, "value": 0.0, "share": null}, {"source": 17, "target": 27, "value": 0.0, "share": null}, {"source": 17, "target": 38, "value": 0.0, "share": null}]};
+
+const labels = ['aontú_aisling_considine', 'ff_barry_andrews', 'fg_regina_doherty',
+       'green_ciaran_cuffe', 'i4c_clare_daly', 'if_philip_dwyer',
+       'ifp_diarmaid_o_conarain', 'ii_niall_boylan', 'ind_brendan_ogle',
+       'ind_conor_murphy', 'ind_eamonn_murphy', 'ind_malachy_steenson',
+       'ind_robin_cafolla', 'ind_stephen_o_rourke', 'ind_umar_al_qadri',
+       'lab_aodhan_o_riordain', 'np_patrick_quinlan', 'np_rebecca_barrett',
+       'pbp-sol_brid_smith', 'sd_sinead_gibney', 'sf_daithi_doolan',
+       'sf_lynn_boylan', 'tip_andy_heasman'];
+
+const colors = ['#FFA233', '#4CBB17', '#0000FF', '#7CFC00', '#8f8b8f', '#8f8b8f', '#8f8b8f', '#66eded', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#C41E3A', '#8f8b8f', '#8f8b8f', '#FF0000', '#d52cde', '#93C572', '#93C572', '#8f8b8f'];
+
+const canMatcher = {'aontú_aisling_considine': {'label': 'CONSIDINE, Aisling',
+                             'Party': 'Aontú'},
+ 'ff_barry_andrews': {'label': 'ANDREWS, Barry*', 'Party': 'FF'},
+ 'fg_regina_doherty': {'label': 'DOHERTY, Regina', 'Party': 'FG'},
+ 'green_ciaran_cuffe': {'label': 'CUFFE, Ciarán*', 'Party': 'Green'},
+ 'i4c_clare_daly': {'label': 'DALY, Clare*', 'Party': 'I4C'},
+ 'if_philip_dwyer': {'label': 'DWYER, Philip', 'Party': 'IF'},
+ 'ifp_diarmaid_o_conarain': {'label': 'Ó CONARÁIN, Diarmaid',
+                             'Party': 'IFP'},
+ 'ii_niall_boylan': {'label': 'BOYLAN, Niall', 'Party': 'II'},
+ 'ind_brendan_ogle': {'label': 'OGLE, Brendan', 'Party': 'Ind'},
+ 'ind_conor_murphy': {'label': 'MURPHY, Conor', 'Party': 'Ind'},
+ 'ind_eamonn_murphy': {'label': 'MURPHY, Eamonn', 'Party': 'Ind'},
+ 'ind_malachy_steenson': {'label': 'STEENSON, Malachy', 'Party': 'Ind'},
+ 'ind_robin_cafolla': {'label': 'CAFOLLA, Robin', 'Party': 'Ind'},
+ 'ind_stephen_o_rourke': {'label': "O'ROURKE, Stephen", 'Party': 'Ind'},
+ 'ind_umar_al_qadri': {'label': 'AL-QADRI, Umar', 'Party': 'Ind'},
+ 'lab_aodhan_o_riordain': {'label': 'Ó RÍORDÁIN, Aodhán', 'Party': 'Lab'},
+ 'np_patrick_quinlan': {'label': 'QUINLAN, Patrick', 'Party': 'NP'},
+ 'np_rebecca_barrett': {'label': 'BARRETT, Rebecca', 'Party': 'NP'},
+ 'pbp-sol_brid_smith': {'label': 'SMITH, Bríd', 'Party': 'PBP-Sol'},
+ 'sd_sinead_gibney': {'label': 'GIBNEY, Sinéad', 'Party': 'SD'},
+ 'sf_daithi_doolan': {'label': 'DOOLAN, Daithí', 'Party': 'SF'},
+ 'sf_lynn_boylan': {'label': 'BOYLAN, Lynn', 'Party': 'SF'},
+ 'tip_andy_heasman': {'label': 'HEASMAN, Andy', 'Party': 'TIP'}}
+
+
+  let scaleColor = d3.scaleOrdinal().domain(labels).range(colors);
+  const voteFormatter = d3.format(",");
+
+  const svg = d3
+    .select("#canvas")
+    .append("svg")
+    .attr("width", width)
+    .attr("background", "aliceblue")
+    .attr("height", height);
+
+  const plot = svg
+    .append("g")
+    .attr("transform", `translate(${[margin.top, margin.left]})`);
+
+  // The sankey object
+  const sankey = d3
+    .sankey()
+    .size([width, height])
+    .nodeId((d) => d.id)
+    .nodeWidth(40)
+    .nodePadding(5)
+    .nodeAlign(d3.sankeyCenter);
+
+  // calling the sankey object
+  let graph = sankey(data);
+
+  // plotting the links
+  let links = plot
+    .append("g")
+    .classed("links", true)
+    .selectAll("path")
+    .data(graph.links)
+    .enter()
+    .append("path")
+    .classed("link", true)
+    .attr("d", d3.sankeyLinkHorizontal())
+    .attr("fill", "none")
+    .attr("stroke", (d) => {
+      return scaleColor(d.source.label);
+    })
+    .attr("stroke-width", (d) => d.width)
+    .attr("stoke-opacity", 0.5);
+
+  // plotting the nodes
+  let nodes = plot
+    .append("g")
+    .classed("nodes", true)
+    .selectAll("rect")
+    .data(graph.nodes)
+    .enter()
+    .append("rect")
+    .classed("node", true)
+    .attr("x", (d) => d.x0)
+    .attr("y", (d) => d.y0)
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("fill", (d) => {
+      return scaleColor(d.label);
+    });
+
+  let label_texts = plot
+    .selectAll("text")
+    .data(data.nodes)
+    .enter()
+    .append("text")
+    .attr("x", (d) => (d.x1 + d.x0 < width / 2 ? (d.x1 + d.x0) / 2 : d.x0))
+    .attr("y", (d) => (d.y1 + d.y0) / 2)
+    .style("text-anchor", (d) => (d.x1 + d.x0 < width / 2 ? "start" : "end"))
+    .text(
+      (d) => `${canMatcher[d.label].label}, (${canMatcher[d.label].Party})`,
+    );
+
+  // tooltip
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  // plot.selectAll('path.link')
+  links
+    .on("mouseover", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0.75);
+
+      tooltip
+        .html(htmlFormatter(d))
+        .style("left", e.pageX + "px")
+        .style("top", e.pageY + "px");
+    })
+    .on("mouseout", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0);
+    });
+
+  function htmlFormatter(d) {
+    return `${canMatcher[d.source.label].label} transferred ${voteFormatter(d.value)}
+            votes to ${canMatcher[d.target.label].label}`;
+  }
+         
+        }
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>
