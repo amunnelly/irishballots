@@ -23,7 +23,7 @@ title: Irish Ballots
 description: >- # this means to ignore newlines until "baseurl:"
   Visualisations of counts and transfers in Irish local, general and EU elections.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://amunnelly.github.io/irishballots/" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 github_username: amunnelly
 
