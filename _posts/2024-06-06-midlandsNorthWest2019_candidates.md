@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "EU 2019 Midlands North-West Party Transfers"
+title:  "EU 2019 Midlands North-West Candidate Transfers"
 date:   2024-06-06 10:18:45 +0100
 categories: EU transfers
 tags: midlandsNorthWest candidates 2019
