@@ -1,0 +1,223 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+            // https://github.com/d3/d3-sankey v0.12.3 Copyright 2019 Mike Bostock
+!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("d3-array"),require("d3-shape")):"function"==typeof define&&define.amd?define(["exports","d3-array","d3-shape"],t):t((n=n||self).d3=n.d3||{},n.d3,n.d3)}(this,function(n,t,e){"use strict";function o(n){return n.target.depth}function r(n,t){return n.sourceLinks.length?n.depth:t-1}function i(n){return function(){return n}}function s(n,t){return u(n.source,t.source)||n.index-t.index}function f(n,t){return u(n.target,t.target)||n.index-t.index}function u(n,t){return n.y0-t.y0}function c(n){return n.value}function l(n){return n.index}function a(n){return n.nodes}function d(n){return n.links}function h(n,t){const e=n.get(t);if(!e)throw new Error("missing: "+t);return e}function g({nodes:n}){for(const t of n){let n=t.y0,e=n;for(const e of t.sourceLinks)e.y0=n+e.width/2,n+=e.width;for(const n of t.targetLinks)n.y1=e+n.width/2,e+=n.width}}function y(n){return[n.source.x1,n.y0]}function k(n){return[n.target.x0,n.y1]}n.sankey=function(){let n,e,o,y=0,k=0,L=1,p=1,w=24,x=8,m=l,v=r,M=a,b=d,S=6;function z(){const r={nodes:M.apply(null,arguments),links:b.apply(null,arguments)};return function({nodes:n,links:t}){for(const[t,e]of n.entries())e.index=t,e.sourceLinks=[],e.targetLinks=[];const e=new Map(n.map((t,e)=>[m(t,e,n),t]));for(const[n,o]of t.entries()){o.index=n;let{source:t,target:r}=o;"object"!=typeof t&&(t=o.source=h(e,t)),"object"!=typeof r&&(r=o.target=h(e,r)),t.sourceLinks.push(o),r.targetLinks.push(o)}if(null!=o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(o),e.sort(o)}(r),function({nodes:n}){for(const e of n)e.value=void 0===e.fixedValue?Math.max(t.sum(e.sourceLinks,c),t.sum(e.targetLinks,c)):e.fixedValue}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.depth=r;for(const{target:t}of n.sourceLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.height=r;for(const{source:t}of n.targetLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function(o){const r=function({nodes:n}){const o=t.max(n,n=>n.depth)+1,r=(L-y-w)/(o-1),i=new Array(o);for(const t of n){const n=Math.max(0,Math.min(o-1,Math.floor(v.call(null,t,o))));t.layer=n,t.x0=y+n*r,t.x1=t.x0+w,i[n]?i[n].push(t):i[n]=[t]}if(e)for(const n of i)n.sort(e);return i}(o);n=Math.min(x,(p-k)/(t.max(r,n=>n.length)-1)),function(e){const o=t.min(e,e=>(p-k-(e.length-1)*n)/t.sum(e,c));for(const t of e){let e=k;for(const r of t){r.y0=e,r.y1=e+r.value*o,e=r.y1+n;for(const n of r.sourceLinks)n.width=n.value*o}e=(p-e+n)/(t.length+1);for(let n=0;n<t.length;++n){const o=t[n];o.y0+=e*(n+1),o.y1+=e*(n+1)}V(t)}}(r);for(let n=0;n<S;++n){const t=Math.pow(.99,n),e=Math.max(1-t,(n+1)/S);E(r,t,e),j(r,t,e)}}(r),g(r),r}function j(n,t,o){for(let r=1,i=n.length;r<i;++r){const i=n[r];for(const n of i){let e=0,o=0;for(const{source:t,value:r}of n.targetLinks){let i=r*(n.layer-t.layer);e+=_(t,n)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function E(n,t,o){for(let r=n.length-2;r>=0;--r){const i=n[r];for(const n of i){let e=0,o=0;for(const{target:t,value:r}of n.sourceLinks){let i=r*(t.layer-n.layer);e+=C(n,t)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function q(t,e){const o=t.length>>1,r=t[o];H(t,r.y0-n,o-1,e),A(t,r.y1+n,o+1,e),H(t,p,t.length-1,e),A(t,k,0,e)}function A(t,e,o,r){for(;o<t.length;++o){const i=t[o],s=(e-i.y0)*r;s>1e-6&&(i.y0+=s,i.y1+=s),e=i.y1+n}}function H(t,e,o,r){for(;o>=0;--o){const i=t[o],s=(i.y1-e)*r;s>1e-6&&(i.y0-=s,i.y1-=s),e=i.y0-n}}function P({sourceLinks:n,targetLinks:t}){if(void 0===o){for(const{source:{sourceLinks:n}}of t)n.sort(f);for(const{target:{targetLinks:t}}of n)t.sort(s)}}function V(n){if(void 0===o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(f),e.sort(s)}function _(t,e){let o=t.y0-(t.sourceLinks.length-1)*n/2;for(const{target:r,width:i}of t.sourceLinks){if(r===e)break;o+=i+n}for(const{source:n,width:r}of e.targetLinks){if(n===t)break;o-=r}return o}function C(t,e){let o=e.y0-(e.targetLinks.length-1)*n/2;for(const{source:r,width:i}of e.targetLinks){if(r===t)break;o+=i+n}for(const{target:n,width:r}of t.sourceLinks){if(n===e)break;o-=r}return o}return z.update=function(n){return g(n),n},z.nodeId=function(n){return arguments.length?(m="function"==typeof n?n:i(n),z):m},z.nodeAlign=function(n){return arguments.length?(v="function"==typeof n?n:i(n),z):v},z.nodeSort=function(n){return arguments.length?(e=n,z):e},z.nodeWidth=function(n){return arguments.length?(w=+n,z):w},z.nodePadding=function(t){return arguments.length?(x=n=+t,z):x},z.nodes=function(n){return arguments.length?(M="function"==typeof n?n:i(n),z):M},z.links=function(n){return arguments.length?(b="function"==typeof n?n:i(n),z):b},z.linkSort=function(n){return arguments.length?(o=n,z):o},z.size=function(n){return arguments.length?(y=k=0,L=+n[0],p=+n[1],z):[L-y,p-k]},z.extent=function(n){return arguments.length?(y=+n[0][0],L=+n[1][0],k=+n[0][1],p=+n[1][1],z):[[y,k],[L,p]]},z.iterations=function(n){return arguments.length?(S=+n,z):S},z},n.sankeyCenter=function(n){return n.targetLinks.length?n.depth:n.sourceLinks.length?t.min(n.sourceLinks,o)-1:0},n.sankeyJustify=r,n.sankeyLeft=function(n){return n.depth},n.sankeyLinkHorizontal=function(){return e.linkHorizontal().source(y).target(k)},n.sankeyRight=function(n,t){return t-1-n.height},Object.defineProperty(n,"__esModule",{value:!0})});
+
+// plot dimensions
+  const width = 850;
+  const height = 1000;
+  const margin = { top: 10, right: 50, bottom: 25, left: 50 };
+  const LABEL_HEIGHT_LIMIT = 10;
+
+const data = {"nodes":[{"id":0,"label":"ind_charlotte_keenan"},{"id":1,"label":"ind_stephen_garland"},{"id":2,"label":"ind_daniel_pocock"},{"id":3,"label":"ind_gerry_waters"},{"id":4,"label":"if_margaret_maguire"},{"id":5,"label":"np_james_reynolds"},{"id":6,"label":"pbp-sol_brian_o_boyle"},{"id":7,"label":"np_justin_barrett"},{"id":8,"label":"tip_anthony_cahill"},{"id":9,"label":"ind_michelle_smith"},{"id":10,"label":"lab_fergal_landy"},{"id":11,"label":"green_pauline_o_reilly"},{"id":12,"label":"ind_john_waters"},{"id":13,"label":"sd_rory_hearne"},{"id":14,"label":"ifp_hermann_kelly"},{"id":15,"label":"ind_peter_casey"},{"id":16,"label":"ind_saoirse_mchugh"},{"id":17,"label":"ff_niall_blaney"},{"id":18,"label":"sf_chris_macmanus"},{"id":19,"label":"aontú_peadar_toibin"},{"id":20,"label":"ff_lisa_chambers"},{"id":21,"label":"ind_luke_ming_flanagan"},{"id":22,"label":"ind_luke_ming_flanagan"},{"id":23,"label":"ff_barry_cowen"},{"id":24,"label":"fg_nina_carberry"},{"id":25,"label":"fg_maria_walsh"},{"id":26,"label":"ii_ciaran_mullooly"},{"id":27,"label":"sf_michelle_gildernew"},{"id":28,"label":"ff_lisa_chambers"},{"id":29,"label":"aontú_peadar_toibin"},{"id":30,"label":"ff_niall_blaney"},{"id":31,"label":"sf_chris_macmanus"},{"id":32,"label":"ind_peter_casey"},{"id":33,"label":"ind_saoirse_mchugh"},{"id":34,"label":"sd_rory_hearne"},{"id":35,"label":"ifp_hermann_kelly"},{"id":36,"label":"green_pauline_o_reilly"},{"id":37,"label":"ind_john_waters"},{"id":38,"label":"lab_fergal_landy"},{"id":39,"label":"ind_michelle_smith"},{"id":40,"label":"tip_anthony_cahill"},{"id":41,"label":"np_justin_barrett"},{"id":42,"label":"pbp-sol_brian_o_boyle"},{"id":43,"label":"np_james_reynolds"},{"id":44,"label":"if_margaret_maguire"},{"id":45,"label":"ind_gerry_waters"},{"id":46,"label":"ind_charlotte_keenan"},{"id":47,"label":"ind_daniel_pocock"},{"id":48,"label":"ind_stephen_garland"}],"links":[{"source":0,"target":22,"value":112.33333333333331,"share":0.04},{"source":0,"target":23,"value":29,"share":0.01},{"source":0,"target":24,"value":37.333333333333336,"share":0.01},{"source":0,"target":25,"value":34.666666666666664,"share":0.01},{"source":0,"target":26,"value":40.66666666666666,"share":0.02},{"source":0,"target":27,"value":36.66666666666666,"share":0.01},{"source":0,"target":28,"value":22,"share":0.01},{"source":0,"target":29,"value":24,"share":0.01},{"source":0,"target":30,"value":10.333333333333334,"share":null},{"source":0,"target":31,"value":21.33333333333333,"share":0.01},{"source":0,"target":32,"value":39,"share":0.01},{"source":0,"target":33,"value":122.33333333333331,"share":0.05},{"source":0,"target":34,"value":26.33333333333333,"share":0.01},{"source":0,"target":35,"value":21,"share":0.01},{"source":0,"target":36,"value":22.33333333333333,"share":0.01},{"source":0,"target":37,"value":18,"share":0.01},{"source":0,"target":38,"value":18,"share":0.01},{"source":0,"target":39,"value":23.666666666666668,"share":0.01},{"source":0,"target":40,"value":13,"share":null},{"source":0,"target":41,"value":15.333333333333334,"share":0.01},{"source":0,"target":42,"value":18.33333333333333,"share":0.01},{"source":0,"target":43,"value":11,"share":null},{"source":0,"target":44,"value":38,"share":0.01},{"source":0,"target":45,"value":13.666666666666666,"share":0.01},{"source":1,"target":22,"value":112.33333333333331,"share":0.04},{"source":1,"target":23,"value":29,"share":0.01},{"source":1,"target":24,"value":37.333333333333336,"share":0.01},{"source":1,"target":25,"value":34.666666666666664,"share":0.01},{"source":1,"target":26,"value":40.66666666666666,"share":0.02},{"source":1,"target":27,"value":36.66666666666666,"share":0.01},{"source":1,"target":28,"value":22,"share":0.01},{"source":1,"target":29,"value":24,"share":0.01},{"source":1,"target":30,"value":10.333333333333334,"share":null},{"source":1,"target":31,"value":21.33333333333333,"share":0.01},{"source":1,"target":32,"value":39,"share":0.01},{"source":1,"target":33,"value":122.33333333333331,"share":0.05},{"source":1,"target":34,"value":26.33333333333333,"share":0.01},{"source":1,"target":35,"value":21,"share":0.01},{"source":1,"target":36,"value":22.33333333333333,"share":0.01},{"source":1,"target":37,"value":18,"share":0.01},{"source":1,"target":38,"value":18,"share":0.01},{"source":1,"target":39,"value":23.666666666666668,"share":0.01},{"source":1,"target":40,"value":13,"share":null},{"source":1,"target":41,"value":15.333333333333334,"share":0.01},{"source":1,"target":42,"value":18.33333333333333,"share":0.01},{"source":1,"target":43,"value":11,"share":null},{"source":1,"target":44,"value":38,"share":0.01},{"source":1,"target":45,"value":13.666666666666666,"share":0.01},{"source":2,"target":22,"value":112.33333333333331,"share":0.04},{"source":2,"target":23,"value":29,"share":0.01},{"source":2,"target":24,"value":37.333333333333336,"share":0.01},{"source":2,"target":25,"value":34.666666666666664,"share":0.01},{"source":2,"target":26,"value":40.66666666666666,"share":0.02},{"source":2,"target":27,"value":36.66666666666666,"share":0.01},{"source":2,"target":28,"value":22,"share":0.01},{"source":2,"target":29,"value":24,"share":0.01},{"source":2,"target":30,"value":10.333333333333334,"share":null},{"source":2,"target":31,"value":21.33333333333333,"share":0.01},{"source":2,"target":32,"value":39,"share":0.01},{"source":2,"target":33,"value":122.33333333333331,"share":0.05},{"source":2,"target":34,"value":26.33333333333333,"share":0.01},{"source":2,"target":35,"value":21,"share":0.01},{"source":2,"target":36,"value":22.33333333333333,"share":0.01},{"source":2,"target":37,"value":18,"share":0.01},{"source":2,"target":38,"value":18,"share":0.01},{"source":2,"target":39,"value":23.666666666666668,"share":0.01},{"source":2,"target":40,"value":13,"share":null},{"source":2,"target":41,"value":15.333333333333334,"share":0.01},{"source":2,"target":42,"value":18.33333333333333,"share":0.01},{"source":2,"target":43,"value":11,"share":null},{"source":2,"target":44,"value":38,"share":0.01},{"source":2,"target":45,"value":13.666666666666666,"share":0.01},{"source":3,"target":22,"value":149,"share":0.05},{"source":3,"target":24,"value":110,"share":0.04},{"source":3,"target":23,"value":46,"share":0.02},{"source":3,"target":25,"value":113,"share":0.04},{"source":3,"target":26,"value":111,"share":0.04},{"source":3,"target":27,"value":40,"share":0.01},{"source":3,"target":28,"value":48,"share":0.02},{"source":3,"target":29,"value":204,"share":0.07},{"source":3,"target":30,"value":21,"share":0.01},{"source":3,"target":31,"value":36,"share":0.01},{"source":3,"target":32,"value":90,"share":0.03},{"source":3,"target":33,"value":121,"share":0.04},{"source":3,"target":34,"value":70,"share":0.02},{"source":3,"target":35,"value":117,"share":0.04},{"source":3,"target":36,"value":39,"share":0.01},{"source":3,"target":37,"value":1060,"share":0.35},{"source":3,"target":38,"value":17,"share":0.01},{"source":3,"target":39,"value":105,"share":0.03},{"source":3,"target":40,"value":49,"share":0.02},{"source":3,"target":41,"value":32,"share":0.01},{"source":3,"target":42,"value":46,"share":0.02},{"source":3,"target":43,"value":60,"share":0.02},{"source":3,"target":44,"value":53,"share":0.02},{"source":3,"target":46,"value":0,"share":null},{"source":3,"target":47,"value":0,"share":null},{"source":3,"target":48,"value":0,"share":null},{"source":4,"target":22,"value":155,"share":0.05},{"source":4,"target":24,"value":83,"share":0.03},{"source":4,"target":23,"value":69,"share":0.02},{"source":4,"target":25,"value":87,"share":0.03},{"source":4,"target":26,"value":279,"share":0.08},{"source":4,"target":27,"value":93,"share":0.03},{"source":4,"target":28,"value":59,"share":0.02},{"source":4,"target":29,"value":205,"share":0.06},{"source":4,"target":30,"value":26,"share":0.01},{"source":4,"target":31,"value":79,"share":0.02},{"source":4,"target":32,"value":124,"share":0.04},{"source":4,"target":33,"value":280,"share":0.09},{"source":4,"target":34,"value":29,"share":0.01},{"source":4,"target":37,"value":227,"share":0.07},{"source":4,"target":35,"value":478,"share":0.15},{"source":4,"target":36,"value":73,"share":0.02},{"source":4,"target":38,"value":29,"share":0.01},{"source":4,"target":39,"value":49,"share":0.01},{"source":4,"target":40,"value":179,"share":0.05},{"source":4,"target":41,"value":103,"share":0.03},{"source":4,"target":42,"value":55,"share":0.02},{"source":4,"target":43,"value":185,"share":0.06},{"source":4,"target":46,"value":0,"share":null},{"source":4,"target":47,"value":0,"share":null},{"source":4,"target":45,"value":0,"share":null},{"source":4,"target":48,"value":0,"share":null},{"source":5,"target":22,"value":164,"share":0.05},{"source":5,"target":24,"value":93,"share":0.03},{"source":5,"target":23,"value":94,"share":0.03},{"source":5,"target":25,"value":99,"share":0.03},{"source":5,"target":26,"value":451,"share":0.13},{"source":5,"target":27,"value":43,"share":0.01},{"source":5,"target":28,"value":55,"share":0.02},{"source":5,"target":29,"value":341,"share":0.1},{"source":5,"target":30,"value":27,"share":0.01},{"source":5,"target":31,"value":61,"share":0.02},{"source":5,"target":32,"value":153,"share":0.04},{"source":5,"target":33,"value":58,"share":0.02},{"source":5,"target":34,"value":9,"share":null},{"source":5,"target":37,"value":351,"share":0.1},{"source":5,"target":35,"value":388,"share":0.11},{"source":5,"target":36,"value":28,"share":0.01},{"source":5,"target":38,"value":8,"share":null},{"source":5,"target":39,"value":62,"share":0.02},{"source":5,"target":40,"value":108,"share":0.03},{"source":5,"target":41,"value":502,"share":0.14},{"source":5,"target":42,"value":32,"share":0.01},{"source":5,"target":44,"value":0,"share":null},{"source":5,"target":46,"value":0,"share":null},{"source":5,"target":47,"value":0,"share":null},{"source":5,"target":45,"value":0,"share":null},{"source":5,"target":48,"value":0,"share":null},{"source":6,"target":22,"value":563,"share":0.14},{"source":6,"target":24,"value":63,"share":0.02},{"source":6,"target":23,"value":33,"share":0.01},{"source":6,"target":25,"value":148,"share":0.04},{"source":6,"target":26,"value":136,"share":0.03},{"source":6,"target":27,"value":290,"share":0.07},{"source":6,"target":28,"value":58,"share":0.01},{"source":6,"target":29,"value":132,"share":0.03},{"source":6,"target":30,"value":31,"share":0.01},{"source":6,"target":31,"value":386,"share":0.09},{"source":6,"target":32,"value":68,"share":0.02},{"source":6,"target":33,"value":558,"share":0.13},{"source":6,"target":37,"value":114,"share":0.03},{"source":6,"target":34,"value":615,"share":0.15},{"source":6,"target":35,"value":53,"share":0.01},{"source":6,"target":36,"value":240,"share":0.06},{"source":6,"target":38,"value":158,"share":0.04},{"source":6,"target":39,"value":32,"share":0.01},{"source":6,"target":40,"value":68,"share":0.02},{"source":6,"target":41,"value":22,"share":0.01},{"source":6,"target":44,"value":0,"share":null},{"source":6,"target":46,"value":0,"share":null},{"source":6,"target":47,"value":0,"share":null},{"source":6,"target":45,"value":0,"share":null},{"source":6,"target":48,"value":0,"share":null},{"source":6,"target":43,"value":0,"share":null},{"source":7,"target":22,"value":260,"share":0.05},{"source":7,"target":24,"value":243,"share":0.05},{"source":7,"target":23,"value":89,"share":0.02},{"source":7,"target":25,"value":40,"share":0.01},{"source":7,"target":26,"value":117,"share":0.02},{"source":7,"target":27,"value":102,"share":0.02},{"source":7,"target":28,"value":119,"share":0.02},{"source":7,"target":29,"value":182,"share":0.04},{"source":7,"target":30,"value":595,"share":0.12},{"source":7,"target":31,"value":54,"share":0.01},{"source":7,"target":32,"value":360,"share":0.08},{"source":7,"target":33,"value":54,"share":0.01},{"source":7,"target":34,"value":27,"share":0.01},{"source":7,"target":37,"value":270,"share":0.06},{"source":7,"target":35,"value":547,"share":0.11},{"source":7,"target":36,"value":13,"share":null},{"source":7,"target":38,"value":10,"share":null},{"source":7,"target":39,"value":18,"share":null},{"source":7,"target":40,"value":1146,"share":0.24},{"source":7,"target":44,"value":0,"share":null},{"source":7,"target":46,"value":0,"share":null},{"source":7,"target":47,"value":0,"share":null},{"source":7,"target":45,"value":0,"share":null},{"source":7,"target":48,"value":0,"share":null},{"source":7,"target":43,"value":0,"share":null},{"source":7,"target":42,"value":0,"share":null},{"source":8,"target":22,"value":642,"share":0.1},{"source":8,"target":24,"value":363,"share":0.06},{"source":8,"target":23,"value":162,"share":0.03},{"source":8,"target":25,"value":107,"share":0.02},{"source":8,"target":26,"value":289,"share":0.05},{"source":8,"target":27,"value":341,"share":0.06},{"source":8,"target":28,"value":279,"share":0.05},{"source":8,"target":29,"value":211,"share":0.03},{"source":8,"target":30,"value":163,"share":0.03},{"source":8,"target":31,"value":105,"share":0.02},{"source":8,"target":32,"value":980,"share":0.16},{"source":8,"target":33,"value":132,"share":0.02},{"source":8,"target":34,"value":90,"share":0.01},{"source":8,"target":37,"value":241,"share":0.04},{"source":8,"target":35,"value":993,"share":0.16},{"source":8,"target":36,"value":50,"share":0.01},{"source":8,"target":38,"value":75,"share":0.01},{"source":8,"target":39,"value":52,"share":0.01},{"source":8,"target":44,"value":0,"share":null},{"source":8,"target":46,"value":0,"share":null},{"source":8,"target":47,"value":0,"share":null},{"source":8,"target":45,"value":0,"share":null},{"source":8,"target":48,"value":0,"share":null},{"source":8,"target":43,"value":0,"share":null},{"source":8,"target":41,"value":0,"share":null},{"source":8,"target":42,"value":0,"share":null},{"source":9,"target":22,"value":638,"share":0.09},{"source":9,"target":24,"value":135,"share":0.02},{"source":9,"target":23,"value":115,"share":0.02},{"source":9,"target":25,"value":241,"share":0.03},{"source":9,"target":26,"value":804,"share":0.11},{"source":9,"target":27,"value":206,"share":0.03},{"source":9,"target":28,"value":147,"share":0.02},{"source":9,"target":29,"value":750,"share":0.11},{"source":9,"target":30,"value":75,"share":0.01},{"source":9,"target":31,"value":196,"share":0.03},{"source":9,"target":32,"value":443,"share":0.06},{"source":9,"target":33,"value":503,"share":0.07},{"source":9,"target":35,"value":667,"share":0.09},{"source":9,"target":37,"value":1010,"share":0.14},{"source":9,"target":34,"value":35,"share":null},{"source":9,"target":36,"value":33,"share":null},{"source":9,"target":38,"value":29,"share":null},{"source":9,"target":44,"value":0,"share":null},{"source":9,"target":46,"value":0,"share":null},{"source":9,"target":47,"value":0,"share":null},{"source":9,"target":45,"value":0,"share":null},{"source":9,"target":48,"value":0,"share":null},{"source":9,"target":43,"value":0,"share":null},{"source":9,"target":41,"value":0,"share":null},{"source":9,"target":42,"value":0,"share":null},{"source":9,"target":40,"value":0,"share":null},{"source":10,"target":22,"value":541,"share":0.07},{"source":10,"target":24,"value":582,"share":0.08},{"source":10,"target":23,"value":227,"share":0.03},{"source":10,"target":25,"value":681,"share":0.09},{"source":10,"target":26,"value":325,"share":0.04},{"source":10,"target":27,"value":313,"share":0.04},{"source":10,"target":28,"value":312,"share":0.04},{"source":10,"target":29,"value":207,"share":0.03},{"source":10,"target":30,"value":128,"share":0.02},{"source":10,"target":31,"value":255,"share":0.03},{"source":10,"target":32,"value":98,"share":0.01},{"source":10,"target":33,"value":498,"share":0.07},{"source":10,"target":35,"value":63,"share":0.01},{"source":10,"target":37,"value":69,"share":0.01},{"source":10,"target":34,"value":949,"share":0.13},{"source":10,"target":36,"value":1030,"share":0.14},{"source":10,"target":44,"value":0,"share":null},{"source":10,"target":46,"value":0,"share":null},{"source":10,"target":47,"value":0,"share":null},{"source":10,"target":45,"value":0,"share":null},{"source":10,"target":39,"value":0,"share":null},{"source":10,"target":48,"value":0,"share":null},{"source":10,"target":43,"value":0,"share":null},{"source":10,"target":41,"value":0,"share":null},{"source":10,"target":42,"value":0,"share":null},{"source":10,"target":40,"value":0,"share":null},{"source":11,"target":22,"value":1193,"share":0.08},{"source":11,"target":24,"value":1274,"share":0.08},{"source":11,"target":23,"value":498,"share":0.03},{"source":11,"target":25,"value":2738,"share":0.18},{"source":11,"target":26,"value":478,"share":0.03},{"source":11,"target":27,"value":488,"share":0.03},{"source":11,"target":28,"value":988,"share":0.06},{"source":11,"target":29,"value":595,"share":0.04},{"source":11,"target":30,"value":212,"share":0.01},{"source":11,"target":31,"value":382,"share":0.02},{"source":11,"target":32,"value":108,"share":0.01},{"source":11,"target":33,"value":2301,"share":0.15},{"source":11,"target":35,"value":40,"share":null},{"source":11,"target":37,"value":118,"share":0.01},{"source":11,"target":34,"value":2276,"share":0.15},{"source":11,"target":44,"value":0,"share":null},{"source":11,"target":46,"value":0,"share":null},{"source":11,"target":47,"value":0,"share":null},{"source":11,"target":45,"value":0,"share":null},{"source":11,"target":39,"value":0,"share":null},{"source":11,"target":48,"value":0,"share":null},{"source":11,"target":38,"value":0,"share":null},{"source":11,"target":43,"value":0,"share":null},{"source":11,"target":41,"value":0,"share":null},{"source":11,"target":42,"value":0,"share":null},{"source":11,"target":40,"value":0,"share":null},{"source":12,"target":22,"value":1809,"share":0.11},{"source":12,"target":24,"value":259,"share":0.02},{"source":12,"target":25,"value":657,"share":0.04},{"source":12,"target":23,"value":266,"share":0.02},{"source":12,"target":26,"value":1479,"share":0.09},{"source":12,"target":27,"value":241,"share":0.01},{"source":12,"target":28,"value":224,"share":0.01},{"source":12,"target":29,"value":2806,"share":0.16},{"source":12,"target":30,"value":154,"share":0.01},{"source":12,"target":31,"value":342,"share":0.02},{"source":12,"target":33,"value":953,"share":0.06},{"source":12,"target":32,"value":1411,"share":0.08},{"source":12,"target":34,"value":77,"share":null},{"source":12,"target":35,"value":3572,"share":0.21},{"source":12,"target":36,"value":0,"share":null},{"source":12,"target":44,"value":0,"share":null},{"source":12,"target":46,"value":0,"share":null},{"source":12,"target":47,"value":0,"share":null},{"source":12,"target":45,"value":0,"share":null},{"source":12,"target":39,"value":0,"share":null},{"source":12,"target":48,"value":0,"share":null},{"source":12,"target":38,"value":0,"share":null},{"source":12,"target":43,"value":0,"share":null},{"source":12,"target":41,"value":0,"share":null},{"source":12,"target":42,"value":0,"share":null},{"source":12,"target":40,"value":0,"share":null},{"source":13,"target":22,"value":3368,"share":0.17},{"source":13,"target":24,"value":1269,"share":0.07},{"source":13,"target":25,"value":1567,"share":0.08},{"source":13,"target":23,"value":732,"share":0.04},{"source":13,"target":26,"value":710,"share":0.04},{"source":13,"target":27,"value":1510,"share":0.08},{"source":13,"target":29,"value":610,"share":0.03},{"source":13,"target":28,"value":872,"share":0.05},{"source":13,"target":30,"value":235,"share":0.01},{"source":13,"target":31,"value":946,"share":0.05},{"source":13,"target":32,"value":221,"share":0.01},{"source":13,"target":33,"value":4433,"share":0.23},{"source":13,"target":35,"value":144,"share":0.01},{"source":13,"target":36,"value":0,"share":null},{"source":13,"target":44,"value":0,"share":null},{"source":13,"target":46,"value":0,"share":null},{"source":13,"target":47,"value":0,"share":null},{"source":13,"target":45,"value":0,"share":null},{"source":13,"target":37,"value":0,"share":null},{"source":13,"target":39,"value":0,"share":null},{"source":13,"target":48,"value":0,"share":null},{"source":13,"target":38,"value":0,"share":null},{"source":13,"target":43,"value":0,"share":null},{"source":13,"target":41,"value":0,"share":null},{"source":13,"target":42,"value":0,"share":null},{"source":13,"target":40,"value":0,"share":null},{"source":14,"target":22,"value":1627,"share":0.08},{"source":14,"target":24,"value":243,"share":0.01},{"source":14,"target":25,"value":156,"share":0.01},{"source":14,"target":23,"value":219,"share":0.01},{"source":14,"target":26,"value":3021,"share":0.14},{"source":14,"target":27,"value":567,"share":0.03},{"source":14,"target":28,"value":120,"share":0.01},{"source":14,"target":29,"value":3678,"share":0.17},{"source":14,"target":31,"value":556,"share":0.03},{"source":14,"target":30,"value":120,"share":0.01},{"source":14,"target":33,"value":694,"share":0.03},{"source":14,"target":32,"value":3222,"share":0.15},{"source":14,"target":36,"value":0,"share":null},{"source":14,"target":44,"value":0,"share":null},{"source":14,"target":46,"value":0,"share":null},{"source":14,"target":47,"value":0,"share":null},{"source":14,"target":45,"value":0,"share":null},{"source":14,"target":37,"value":0,"share":null},{"source":14,"target":39,"value":0,"share":null},{"source":14,"target":48,"value":0,"share":null},{"source":14,"target":38,"value":0,"share":null},{"source":14,"target":43,"value":0,"share":null},{"source":14,"target":41,"value":0,"share":null},{"source":14,"target":42,"value":0,"share":null},{"source":14,"target":34,"value":0,"share":null},{"source":14,"target":40,"value":0,"share":null},{"source":15,"target":22,"value":5654,"share":0.2},{"source":15,"target":24,"value":1647,"share":0.06},{"source":15,"target":25,"value":1106,"share":0.04},{"source":15,"target":23,"value":1663,"share":0.06},{"source":15,"target":26,"value":3044,"share":0.11},{"source":15,"target":29,"value":2487,"share":0.09},{"source":15,"target":27,"value":1103,"share":0.04},{"source":15,"target":28,"value":1162,"share":0.04},{"source":15,"target":31,"value":727,"share":0.03},{"source":15,"target":30,"value":1393,"share":0.05},{"source":15,"target":33,"value":1591,"share":0.06},{"source":15,"target":36,"value":0,"share":null},{"source":15,"target":44,"value":0,"share":null},{"source":15,"target":35,"value":0,"share":null},{"source":15,"target":46,"value":0,"share":null},{"source":15,"target":47,"value":0,"share":null},{"source":15,"target":45,"value":0,"share":null},{"source":15,"target":37,"value":0,"share":null},{"source":15,"target":39,"value":0,"share":null},{"source":15,"target":48,"value":0,"share":null},{"source":15,"target":38,"value":0,"share":null},{"source":15,"target":43,"value":0,"share":null},{"source":15,"target":41,"value":0,"share":null},{"source":15,"target":42,"value":0,"share":null},{"source":15,"target":34,"value":0,"share":null},{"source":15,"target":40,"value":0,"share":null},{"source":16,"target":22,"value":8339,"share":0.26},{"source":16,"target":24,"value":1722,"share":0.05},{"source":16,"target":25,"value":3750,"share":0.12},{"source":16,"target":23,"value":633,"share":0.02},{"source":16,"target":26,"value":2444,"share":0.08},{"source":16,"target":29,"value":1309,"share":0.04},{"source":16,"target":27,"value":1875,"share":0.06},{"source":16,"target":28,"value":2070,"share":0.07},{"source":16,"target":31,"value":1619,"share":0.05},{"source":16,"target":30,"value":476,"share":0.02},{"source":16,"target":36,"value":0,"share":null},{"source":16,"target":44,"value":0,"share":null},{"source":16,"target":35,"value":0,"share":null},{"source":16,"target":46,"value":0,"share":null},{"source":16,"target":47,"value":0,"share":null},{"source":16,"target":45,"value":0,"share":null},{"source":16,"target":37,"value":0,"share":null},{"source":16,"target":39,"value":0,"share":null},{"source":16,"target":32,"value":0,"share":null},{"source":16,"target":48,"value":0,"share":null},{"source":16,"target":38,"value":0,"share":null},{"source":16,"target":43,"value":0,"share":null},{"source":16,"target":41,"value":0,"share":null},{"source":16,"target":42,"value":0,"share":null},{"source":16,"target":34,"value":0,"share":null},{"source":16,"target":40,"value":0,"share":null},{"source":17,"target":22,"value":2808,"share":0.08},{"source":17,"target":25,"value":1875,"share":0.06},{"source":17,"target":24,"value":4182,"share":0.12},{"source":17,"target":23,"value":6124,"share":0.18},{"source":17,"target":26,"value":826,"share":0.02},{"source":17,"target":29,"value":868,"share":0.03},{"source":17,"target":27,"value":974,"share":0.03},{"source":17,"target":28,"value":9016,"share":0.26},{"source":17,"target":31,"value":922,"share":0.03},{"source":17,"target":36,"value":0,"share":null},{"source":17,"target":44,"value":0,"share":null},{"source":17,"target":35,"value":0,"share":null},{"source":17,"target":46,"value":0,"share":null},{"source":17,"target":47,"value":0,"share":null},{"source":17,"target":45,"value":0,"share":null},{"source":17,"target":37,"value":0,"share":null},{"source":17,"target":39,"value":0,"share":null},{"source":17,"target":32,"value":0,"share":null},{"source":17,"target":33,"value":0,"share":null},{"source":17,"target":48,"value":0,"share":null},{"source":17,"target":38,"value":0,"share":null},{"source":17,"target":43,"value":0,"share":null},{"source":17,"target":41,"value":0,"share":null},{"source":17,"target":42,"value":0,"share":null},{"source":17,"target":34,"value":0,"share":null},{"source":17,"target":40,"value":0,"share":null},{"source":18,"target":22,"value":4072,"share":0.11},{"source":18,"target":24,"value":597,"share":0.02},{"source":18,"target":23,"value":627,"share":0.02},{"source":18,"target":25,"value":1466,"share":0.04},{"source":18,"target":26,"value":1168,"share":0.03},{"source":18,"target":28,"value":873,"share":0.02},{"source":18,"target":29,"value":1234,"share":0.03},{"source":18,"target":27,"value":20692,"share":0.57},{"source":18,"target":30,"value":0,"share":null},{"source":18,"target":36,"value":0,"share":null},{"source":18,"target":44,"value":0,"share":null},{"source":18,"target":35,"value":0,"share":null},{"source":18,"target":46,"value":0,"share":null},{"source":18,"target":47,"value":0,"share":null},{"source":18,"target":45,"value":0,"share":null},{"source":18,"target":37,"value":0,"share":null},{"source":18,"target":39,"value":0,"share":null},{"source":18,"target":32,"value":0,"share":null},{"source":18,"target":33,"value":0,"share":null},{"source":18,"target":48,"value":0,"share":null},{"source":18,"target":38,"value":0,"share":null},{"source":18,"target":43,"value":0,"share":null},{"source":18,"target":41,"value":0,"share":null},{"source":18,"target":42,"value":0,"share":null},{"source":18,"target":34,"value":0,"share":null},{"source":18,"target":40,"value":0,"share":null},{"source":19,"target":22,"value":8221,"share":0.15},{"source":19,"target":24,"value":3977,"share":0.07},{"source":19,"target":25,"value":3614,"share":0.06},{"source":19,"target":23,"value":3857,"share":0.07},{"source":19,"target":27,"value":4603,"share":0.08},{"source":19,"target":26,"value":10093,"share":0.18},{"source":19,"target":28,"value":2281,"share":0.04},{"source":19,"target":30,"value":0,"share":null},{"source":19,"target":36,"value":0,"share":null},{"source":19,"target":44,"value":0,"share":null},{"source":19,"target":35,"value":0,"share":null},{"source":19,"target":46,"value":0,"share":null},{"source":19,"target":47,"value":0,"share":null},{"source":19,"target":45,"value":0,"share":null},{"source":19,"target":37,"value":0,"share":null},{"source":19,"target":39,"value":0,"share":null},{"source":19,"target":32,"value":0,"share":null},{"source":19,"target":33,"value":0,"share":null},{"source":19,"target":48,"value":0,"share":null},{"source":19,"target":38,"value":0,"share":null},{"source":19,"target":43,"value":0,"share":null},{"source":19,"target":41,"value":0,"share":null},{"source":19,"target":42,"value":0,"share":null},{"source":19,"target":34,"value":0,"share":null},{"source":19,"target":31,"value":0,"share":null},{"source":19,"target":40,"value":0,"share":null},{"source":20,"target":22,"value":0,"share":null},{"source":20,"target":24,"value":7276,"share":0.12},{"source":20,"target":25,"value":10439,"share":0.17},{"source":20,"target":23,"value":26528,"share":0.42},{"source":20,"target":26,"value":3495,"share":0.06},{"source":20,"target":27,"value":2241,"share":0.04},{"source":20,"target":29,"value":0,"share":null},{"source":20,"target":30,"value":0,"share":null},{"source":20,"target":36,"value":0,"share":null},{"source":20,"target":44,"value":0,"share":null},{"source":20,"target":35,"value":0,"share":null},{"source":20,"target":46,"value":0,"share":null},{"source":20,"target":47,"value":0,"share":null},{"source":20,"target":45,"value":0,"share":null},{"source":20,"target":37,"value":0,"share":null},{"source":20,"target":39,"value":0,"share":null},{"source":20,"target":32,"value":0,"share":null},{"source":20,"target":33,"value":0,"share":null},{"source":20,"target":48,"value":0,"share":null},{"source":20,"target":38,"value":0,"share":null},{"source":20,"target":43,"value":0,"share":null},{"source":20,"target":41,"value":0,"share":null},{"source":20,"target":42,"value":0,"share":null},{"source":20,"target":34,"value":0,"share":null},{"source":20,"target":31,"value":0,"share":null},{"source":20,"target":40,"value":0,"share":null},{"source":21,"target":23,"value":0,"share":null},{"source":21,"target":25,"value":327,"share":0.06},{"source":21,"target":24,"value":754,"share":0.14},{"source":21,"target":26,"value":1488,"share":0.27},{"source":21,"target":27,"value":1084,"share":0.2},{"source":21,"target":29,"value":0,"share":null},{"source":21,"target":28,"value":0,"share":null},{"source":21,"target":30,"value":0,"share":null},{"source":21,"target":36,"value":0,"share":null},{"source":21,"target":44,"value":0,"share":null},{"source":21,"target":35,"value":0,"share":null},{"source":21,"target":46,"value":0,"share":null},{"source":21,"target":47,"value":0,"share":null},{"source":21,"target":45,"value":0,"share":null},{"source":21,"target":37,"value":0,"share":null},{"source":21,"target":39,"value":0,"share":null},{"source":21,"target":32,"value":0,"share":null},{"source":21,"target":33,"value":0,"share":null},{"source":21,"target":48,"value":0,"share":null},{"source":21,"target":38,"value":0,"share":null},{"source":21,"target":43,"value":0,"share":null},{"source":21,"target":41,"value":0,"share":null},{"source":21,"target":42,"value":0,"share":null},{"source":21,"target":34,"value":0,"share":null},{"source":21,"target":31,"value":0,"share":null},{"source":21,"target":40,"value":0,"share":null}]};
+
+const labels = ['aontú_peadar_toibin', 'ff_barry_cowen', 'ff_lisa_chambers',
+       'ff_niall_blaney', 'fg_maria_walsh', 'fg_nina_carberry',
+       'green_pauline_o_reilly', 'if_margaret_maguire', 'ifp_hermann_kelly',
+       'ii_ciaran_mullooly', 'ind_charlotte_keenan', 'ind_daniel_pocock',
+       'ind_gerry_waters', 'ind_john_waters', 'ind_luke_ming_flanagan',
+       'ind_michelle_smith', 'ind_peter_casey', 'ind_saoirse_mchugh',
+       'ind_stephen_garland', 'lab_fergal_landy', 'np_james_reynolds',
+       'np_justin_barrett', 'pbp-sol_brian_o_boyle', 'sd_rory_hearne',
+       'sf_chris_macmanus', 'sf_michelle_gildernew', 'tip_anthony_cahill'];
+
+const colors = ['#FFA233', '#4CBB17', '#4CBB17', '#4CBB17', '#0000FF', '#0000FF',
+'#7CFC00', '#8f8b8f', '#8f8b8f', '#66eded', '#1d1e3b',
+'#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b',
+'#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b',
+'#C41E3A', '#8f8b8f', '#8f8b8f', '#ff0000',
+'#d52cde', '#93C572', '#93C572', '#8f8b8f']
+;
+
+const canMatcher = {'ind_luke_ming_flanagan': {'label': "FLANAGAN, Luke 'Ming'*",
+  'Party': 'Ind'},
+ 'ff_barry_cowen': {'label': 'COWEN, Barry ', 'Party': 'FF'},
+ 'fg_maria_walsh': {'label': 'WALSH, Maria*', 'Party': 'FG'},
+ 'fg_nina_carberry': {'label': 'CARBERRY, Nina', 'Party': 'FG'},
+ 'ii_ciaran_mullooly': {'label': 'MULLOOLY, Ciaran', 'Party': 'II'},
+ 'sf_michelle_gildernew': {'label': 'GILDERNEW, Michelle', 'Party': 'SF'},
+ 'ff_lisa_chambers': {'label': 'CHAMBERS, Lisa', 'Party': 'FF'},
+ 'aontú_peadar_toibin': {'label': 'TÓIBÍN, Peadar', 'Party': 'Aontú'},
+ 'sf_chris_macmanus': {'label': 'MacMANUS, Chris*', 'Party': 'SF'},
+ 'ff_niall_blaney': {'label': 'BLANEY, Niall', 'Party': 'FF'},
+ 'ind_saoirse_mchugh': {'label': 'McHUGH, Saoirse', 'Party': 'Ind'},
+ 'ind_peter_casey': {'label': 'CASEY, Peter', 'Party': 'Ind'},
+ 'ifp_hermann_kelly': {'label': 'KELLY, Hermann', 'Party': 'IFP'},
+ 'sd_rory_hearne': {'label': 'HEARNE, Rory', 'Party': 'SD'},
+ 'ind_john_waters': {'label': 'WATERS, John', 'Party': 'Ind'},
+ 'green_pauline_o_reilly': {'label': "O'REILLY, Pauline",
+  'Party': 'Green'},
+ 'lab_fergal_landy': {'label': 'LANDY, Fergal', 'Party': 'Lab'},
+ 'ind_michelle_smith': {'label': 'SMITH, Michelle', 'Party': 'Ind'},
+ 'tip_anthony_cahill': {'label': 'CAHILL, Anthony', 'Party': 'TIP'},
+ 'np_justin_barrett': {'label': 'BARRETT, Justin', 'Party': 'NP'},
+ 'pbp-sol_brian_o_boyle': {'label': "O'BOYLE, Brian", 'Party': 'PBP-Sol'},
+ 'np_james_reynolds': {'label': 'REYNOLDS, James', 'Party': 'NP'},
+ 'if_margaret_maguire': {'label': 'MAGUIRE, Margaret', 'Party': 'IF'},
+ 'ind_gerry_waters': {'label': 'WATERS, Gerry', 'Party': 'Ind'},
+ 'ind_charlotte_keenan': {'label': 'KEENAN, Charlotte', 'Party': 'Ind'},
+ 'ind_stephen_garland': {'label': 'GARLAND, Stephen', 'Party': 'Ind'},
+ 'ind_daniel_pocock': {'label': 'POCOCK, Daniel', 'Party': 'Ind'}}
+
+
+  let scaleColor = d3.scaleOrdinal().domain(labels).range(colors);
+  const voteFormatter = d3.format(",");
+
+  const svg = d3
+    .select("#canvas")
+    .append("svg")
+    .attr("width", width)
+    .attr("background", "aliceblue")
+    .attr("height", height);
+
+  const plot = svg
+    .append("g")
+    .attr("transform", `translate(${[margin.top, margin.left]})`);
+
+  // The sankey object
+  const sankey = d3
+    .sankey()
+    .size([width, height])
+    .nodeId((d) => d.id)
+    .nodeWidth(40)
+    .nodePadding(5)
+    .nodeAlign(d3.sankeyCenter);
+
+  // calling the sankey object
+  let graph = sankey(data);
+
+  // plotting the links
+  let links = plot
+    .append("g")
+    .classed("links", true)
+    .selectAll("path")
+    .data(graph.links)
+    .enter()
+    .append("path")
+    .classed("link", true)
+    .attr("d", d3.sankeyLinkHorizontal())
+    .attr("fill", "none")
+    .attr("stroke", (d) => {
+      return scaleColor(d.source.label);
+    })
+    .attr("stroke-width", (d) => d.width)
+    .attr("stoke-opacity", 0.5);
+
+  // plotting the nodes
+  let nodes = plot
+    .append("g")
+    .classed("nodes", true)
+    .selectAll("rect")
+    .data(graph.nodes)
+    .enter()
+    .append("rect")
+    .classed("node", true)
+    .attr("x", (d) => d.x0)
+    .attr("y", (d) => d.y0)
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("fill", (d) => {
+      return scaleColor(d.label);
+    });
+
+  let label_texts = plot
+    .selectAll("text")
+    .data(data.nodes)
+    .enter()
+    .append("text")
+    .attr("x", (d) => (d.x1 + d.x0 < width / 2 ? (d.x1 + d.x0) / 2 : d.x0))
+    .attr("y", (d) => (d.y1 + d.y0) / 2)
+    .style("text-anchor", (d) => (d.x1 + d.x0 < width / 2 ? "start" : "end"))
+    .text(
+          (d) => {if (d.y1-d.y0 > LABEL_HEIGHT_LIMIT) return `${canMatcher[d.label].label}, (${canMatcher[d.label].Party})`;}
+        );
+
+  // tooltip
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  // plot.selectAll('path.link')
+  links
+    .on("mouseover", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0.75);
+
+      tooltip
+        .html(htmlFormatter(d))
+        .style("left", e.pageX + "px")
+        .style("top", e.pageY + "px");
+    })
+    .on("mouseout", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0);
+    });
+
+  function htmlFormatter(d) {
+    return `${canMatcher[d.source.label].label} transferred ${voteFormatter(d.value)}
+            votes to ${canMatcher[d.target.label].label}`;
+  }
+
+        }
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

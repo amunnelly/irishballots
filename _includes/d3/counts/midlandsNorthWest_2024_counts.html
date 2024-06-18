@@ -1,0 +1,1001 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            h2 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 24px;
+            }
+
+            h3 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 18px;
+            }
+
+            g text {
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bolder;
+                font-size: 14px;
+                /* fill: #fff; */
+                /* stroke: #000;
+    stroke-width: 1px; */
+            }
+
+            g.axes g.tick text {
+                font-weight: normal;
+            }
+
+            .tooltip {
+                position: absolute;
+                text-align: center;
+                width: 450px;
+                height: 30px;
+                padding: 4px;
+                font: 16px sans-serif;
+                background: #fff;
+                border: 1px solid black;
+                border-radius: 8px;
+                pointer-events: none;
+            }
+
+            path.link {
+                opacity: 0.5;
+            }
+
+            table {
+                font-size: smaller;
+            }
+
+            path.link:hover {
+                opacity: 0.75;
+            }
+
+            #quotaLine {
+                stroke: grey;
+                stroke-width: 1px;
+                stroke-dasharray: 5;
+                fill: none;
+            }
+        </style>
+        <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+        <script>
+            const draw = () => {
+                const QUOTA = 113325;
+                const xLIMIT = 1.3e5;
+                const voteFormatter = d3.format(",");
+
+                const countColors = [
+                    "#1f77b4",
+                    "#aec7e8",
+                    "#ff7f0e",
+                    "#ffbb78",
+                    "#2ca02c",
+                    "#98df8a",
+                    "#d62728",
+                    "#ff9896",
+                    "#9467bd",
+                    "#c5b0d5",
+                    "#8c564b",
+                    "#c49c94",
+                    "#e377c2",
+                    "#f7b6d2",
+                    "#7f7f7f",
+                    "#c7c7c7",
+                    "#bcbd22",
+                    "#dbdb8d",
+                    "#17becf",
+                    "#9edae5",
+                    "#1f77b4",
+                ];
+
+                // SET THE DIMENSIONS
+                const width = 1100;
+                const height = 600;
+
+                const margin = { top: 50, bottom: 10, left: 200, right: 175 };
+                const plot_height = height - margin.top - margin.bottom;
+                const plot_width = width - margin.left - margin.right;
+
+                // data
+                const data = [
+                    {
+                        candidate_id: "ind_luke_ming_flanagan",
+                        Candidate: "FLANAGAN, Luke 'Ming'*, Ind",
+                        "1st Count": 78214.0,
+                        "2nd Count": 149.0,
+                        "3rd Count": 155.0,
+                        "4th Count": 164.0,
+                        "5th Count": 563.0,
+                        "6th Count": 260.0,
+                        "7th Count": 642.0,
+                        "8th Count": 638.0,
+                        "9th Count": 541.0,
+                        "10th Count": 1193.0,
+                        "11th Count": 1809.0,
+                        "12th Count": 3368.0,
+                        "13th Count": 1627.0,
+                        "14th Count": 5654.0,
+                        "15th Count": 8339.0,
+                        "16th Count": 2808.0,
+                        "17th Count": 4072.0,
+                        "18th Count": 8221.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ff_barry_cowen",
+                        Candidate: "COWEN, Barry , FF",
+                        "1st Count": 73908.0,
+                        "2nd Count": 46.0,
+                        "3rd Count": 69.0,
+                        "4th Count": 94.0,
+                        "5th Count": 33.0,
+                        "6th Count": 89.0,
+                        "7th Count": 162.0,
+                        "8th Count": 115.0,
+                        "9th Count": 227.0,
+                        "10th Count": 498.0,
+                        "11th Count": 266.0,
+                        "12th Count": 732.0,
+                        "13th Count": 219.0,
+                        "14th Count": 1663.0,
+                        "15th Count": 633.0,
+                        "16th Count": 6124.0,
+                        "17th Count": 627.0,
+                        "18th Count": 3857.0,
+                        "19th Count": 26528.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "fg_nina_carberry",
+                        Candidate: "CARBERRY, Nina, FG",
+                        "1st Count": 73888.0,
+                        "2nd Count": 110.0,
+                        "3rd Count": 83.0,
+                        "4th Count": 93.0,
+                        "5th Count": 63.0,
+                        "6th Count": 243.0,
+                        "7th Count": 363.0,
+                        "8th Count": 135.0,
+                        "9th Count": 582.0,
+                        "10th Count": 1274.0,
+                        "11th Count": 259.0,
+                        "12th Count": 1269.0,
+                        "13th Count": 243.0,
+                        "14th Count": 1647.0,
+                        "15th Count": 1722.0,
+                        "16th Count": 4182.0,
+                        "17th Count": 597.0,
+                        "18th Count": 3977.0,
+                        "19th Count": 7276.0,
+                        "20th Count": 754.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "fg_maria_walsh",
+                        Candidate: "WALSH, Maria*, FG",
+                        "1st Count": 71476.0,
+                        "2nd Count": 113.0,
+                        "3rd Count": 87.0,
+                        "4th Count": 99.0,
+                        "5th Count": 148.0,
+                        "6th Count": 40.0,
+                        "7th Count": 107.0,
+                        "8th Count": 241.0,
+                        "9th Count": 681.0,
+                        "10th Count": 2738.0,
+                        "11th Count": 657.0,
+                        "12th Count": 1567.0,
+                        "13th Count": 156.0,
+                        "14th Count": 1106.0,
+                        "15th Count": 3750.0,
+                        "16th Count": 1875.0,
+                        "17th Count": 1466.0,
+                        "18th Count": 3614.0,
+                        "19th Count": 10439.0,
+                        "20th Count": 327.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ii_ciaran_mullooly",
+                        Candidate: "MULLOOLY, Ciaran, II",
+                        "1st Count": 57297.0,
+                        "2nd Count": 111.0,
+                        "3rd Count": 279.0,
+                        "4th Count": 451.0,
+                        "5th Count": 136.0,
+                        "6th Count": 117.0,
+                        "7th Count": 289.0,
+                        "8th Count": 804.0,
+                        "9th Count": 325.0,
+                        "10th Count": 478.0,
+                        "11th Count": 1479.0,
+                        "12th Count": 710.0,
+                        "13th Count": 3021.0,
+                        "14th Count": 3044.0,
+                        "15th Count": 2444.0,
+                        "16th Count": 826.0,
+                        "17th Count": 1168.0,
+                        "18th Count": 10093.0,
+                        "19th Count": 3495.0,
+                        "20th Count": 1488.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "sf_michelle_gildernew",
+                        Candidate: "GILDERNEW, Michelle, SF",
+                        "1st Count": 45807.0,
+                        "2nd Count": 40.0,
+                        "3rd Count": 93.0,
+                        "4th Count": 43.0,
+                        "5th Count": 290.0,
+                        "6th Count": 102.0,
+                        "7th Count": 341.0,
+                        "8th Count": 206.0,
+                        "9th Count": 313.0,
+                        "10th Count": 488.0,
+                        "11th Count": 241.0,
+                        "12th Count": 1510.0,
+                        "13th Count": 567.0,
+                        "14th Count": 1103.0,
+                        "15th Count": 1875.0,
+                        "16th Count": 974.0,
+                        "17th Count": 20692.0,
+                        "18th Count": 4603.0,
+                        "19th Count": 2241.0,
+                        "20th Count": 1084.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ff_lisa_chambers",
+                        Candidate: "CHAMBERS, Lisa, FF",
+                        "1st Count": 44069.0,
+                        "2nd Count": 48.0,
+                        "3rd Count": 59.0,
+                        "4th Count": 55.0,
+                        "5th Count": 58.0,
+                        "6th Count": 119.0,
+                        "7th Count": 279.0,
+                        "8th Count": 147.0,
+                        "9th Count": 312.0,
+                        "10th Count": 988.0,
+                        "11th Count": 224.0,
+                        "12th Count": 872.0,
+                        "13th Count": 120.0,
+                        "14th Count": 1162.0,
+                        "15th Count": 2070.0,
+                        "16th Count": 9016.0,
+                        "17th Count": 873.0,
+                        "18th Count": 2281.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "aontú_peadar_toibin",
+                        Candidate: "TÓIBÍN, Peadar, Aontú",
+                        "1st Count": 40742.0,
+                        "2nd Count": 204.0,
+                        "3rd Count": 205.0,
+                        "4th Count": 341.0,
+                        "5th Count": 132.0,
+                        "6th Count": 182.0,
+                        "7th Count": 211.0,
+                        "8th Count": 750.0,
+                        "9th Count": 207.0,
+                        "10th Count": 595.0,
+                        "11th Count": 2806.0,
+                        "12th Count": 610.0,
+                        "13th Count": 3678.0,
+                        "14th Count": 2487.0,
+                        "15th Count": 1309.0,
+                        "16th Count": 868.0,
+                        "17th Count": 1234.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ff_niall_blaney",
+                        Candidate: "BLANEY, Niall, FF",
+                        "1st Count": 30387.0,
+                        "2nd Count": 21.0,
+                        "3rd Count": 26.0,
+                        "4th Count": 27.0,
+                        "5th Count": 31.0,
+                        "6th Count": 595.0,
+                        "7th Count": 163.0,
+                        "8th Count": 75.0,
+                        "9th Count": 128.0,
+                        "10th Count": 212.0,
+                        "11th Count": 154.0,
+                        "12th Count": 235.0,
+                        "13th Count": 120.0,
+                        "14th Count": 1393.0,
+                        "15th Count": 476.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "sf_chris_macmanus",
+                        Candidate: "MacMANUS, Chris*, SF",
+                        "1st Count": 29427.0,
+                        "2nd Count": 36.0,
+                        "3rd Count": 79.0,
+                        "4th Count": 61.0,
+                        "5th Count": 386.0,
+                        "6th Count": 54.0,
+                        "7th Count": 105.0,
+                        "8th Count": 196.0,
+                        "9th Count": 255.0,
+                        "10th Count": 382.0,
+                        "11th Count": 342.0,
+                        "12th Count": 946.0,
+                        "13th Count": 556.0,
+                        "14th Count": 727.0,
+                        "15th Count": 1619.0,
+                        "16th Count": 922.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_peter_casey",
+                        Candidate: "CASEY, Peter, Ind",
+                        "1st Count": 21102.0,
+                        "2nd Count": 90.0,
+                        "3rd Count": 124.0,
+                        "4th Count": 153.0,
+                        "5th Count": 68.0,
+                        "6th Count": 360.0,
+                        "7th Count": 980.0,
+                        "8th Count": 443.0,
+                        "9th Count": 98.0,
+                        "10th Count": 108.0,
+                        "11th Count": 1411.0,
+                        "12th Count": 221.0,
+                        "13th Count": 3222.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_saoirse_mchugh",
+                        Candidate: "McHUGH, Saoirse, Ind",
+                        "1st Count": 18976.0,
+                        "2nd Count": 121.0,
+                        "3rd Count": 280.0,
+                        "4th Count": 58.0,
+                        "5th Count": 558.0,
+                        "6th Count": 54.0,
+                        "7th Count": 132.0,
+                        "8th Count": 503.0,
+                        "9th Count": 498.0,
+                        "10th Count": 2301.0,
+                        "11th Count": 953.0,
+                        "12th Count": 4433.0,
+                        "13th Count": 694.0,
+                        "14th Count": 1591.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "sd_rory_hearne",
+                        Candidate: "HEARNE, Rory, SD",
+                        "1st Count": 15023.0,
+                        "2nd Count": 70.0,
+                        "3rd Count": 29.0,
+                        "4th Count": 9.0,
+                        "5th Count": 615.0,
+                        "6th Count": 27.0,
+                        "7th Count": 90.0,
+                        "8th Count": 35.0,
+                        "9th Count": 949.0,
+                        "10th Count": 2276.0,
+                        "11th Count": 77.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ifp_hermann_kelly",
+                        Candidate: "KELLY, Hermann, IFP",
+                        "1st Count": 13904.0,
+                        "2nd Count": 117.0,
+                        "3rd Count": 478.0,
+                        "4th Count": 388.0,
+                        "5th Count": 53.0,
+                        "6th Count": 547.0,
+                        "7th Count": 993.0,
+                        "8th Count": 667.0,
+                        "9th Count": 63.0,
+                        "10th Count": 40.0,
+                        "11th Count": 3572.0,
+                        "12th Count": 144.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "green_pauline_o_reilly",
+                        Candidate: "O'REILLY, Pauline, Green",
+                        "1st Count": 13710.0,
+                        "2nd Count": 39.0,
+                        "3rd Count": 73.0,
+                        "4th Count": 28.0,
+                        "5th Count": 240.0,
+                        "6th Count": 13.0,
+                        "7th Count": 50.0,
+                        "8th Count": 33.0,
+                        "9th Count": 1030.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_john_waters",
+                        Candidate: "WATERS, John, Ind",
+                        "1st Count": 13692.0,
+                        "2nd Count": 1060.0,
+                        "3rd Count": 227.0,
+                        "4th Count": 351.0,
+                        "5th Count": 114.0,
+                        "6th Count": 270.0,
+                        "7th Count": 241.0,
+                        "8th Count": 1010.0,
+                        "9th Count": 69.0,
+                        "10th Count": 118.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "lab_fergal_landy",
+                        Candidate: "LANDY, Fergal, Lab",
+                        "1st Count": 6970.0,
+                        "2nd Count": 17.0,
+                        "3rd Count": 29.0,
+                        "4th Count": 8.0,
+                        "5th Count": 158.0,
+                        "6th Count": 10.0,
+                        "7th Count": 75.0,
+                        "8th Count": 29.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_michelle_smith",
+                        Candidate: "SMITH, Michelle, Ind",
+                        "1st Count": 6713.0,
+                        "2nd Count": 105.0,
+                        "3rd Count": 49.0,
+                        "4th Count": 62.0,
+                        "5th Count": 32.0,
+                        "6th Count": 18.0,
+                        "7th Count": 52.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "tip_anthony_cahill",
+                        Candidate: "CAHILL, Anthony, TIP",
+                        "1st Count": 4535.0,
+                        "2nd Count": 49.0,
+                        "3rd Count": 179.0,
+                        "4th Count": 108.0,
+                        "5th Count": 68.0,
+                        "6th Count": 1146.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "np_justin_barrett",
+                        Candidate: "BARRETT, Justin, NP",
+                        "1st Count": 4086.0,
+                        "2nd Count": 32.0,
+                        "3rd Count": 103.0,
+                        "4th Count": 502.0,
+                        "5th Count": 22.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "pbp-sol_brian_o_boyle",
+                        Candidate: "O'BOYLE, Brian, PBP-Sol",
+                        "1st Count": 3982.0,
+                        "2nd Count": 46.0,
+                        "3rd Count": 55.0,
+                        "4th Count": 32.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "np_james_reynolds",
+                        Candidate: "REYNOLDS, James, NP",
+                        "1st Count": 3201.0,
+                        "2nd Count": 60.0,
+                        "3rd Count": 185.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "if_margaret_maguire",
+                        Candidate: "MAGUIRE, Margaret, IF",
+                        "1st Count": 3117.0,
+                        "2nd Count": 53.0,
+                        "3rd Count": 0.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_gerry_waters",
+                        Candidate: "WATERS, Gerry, Ind",
+                        "1st Count": 3015.0,
+                        "2nd Count": 0.0,
+                        "3rd Count": 0.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_charlotte_keenan",
+                        Candidate: "KEENAN, Charlotte, Ind",
+                        "1st Count": 1102.0,
+                        "2nd Count": 0.0,
+                        "3rd Count": 0.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_stephen_garland",
+                        Candidate: "GARLAND, Stephen, Ind",
+                        "1st Count": 1079.0,
+                        "2nd Count": 0.0,
+                        "3rd Count": 0.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                    {
+                        candidate_id: "ind_daniel_pocock",
+                        Candidate: "POCOCK, Daniel, Ind",
+                        "1st Count": 524.0,
+                        "2nd Count": 0.0,
+                        "3rd Count": 0.0,
+                        "4th Count": 0.0,
+                        "5th Count": 0.0,
+                        "6th Count": 0.0,
+                        "7th Count": 0.0,
+                        "8th Count": 0.0,
+                        "9th Count": 0.0,
+                        "10th Count": 0.0,
+                        "11th Count": 0.0,
+                        "12th Count": 0.0,
+                        "13th Count": 0.0,
+                        "14th Count": 0.0,
+                        "15th Count": 0.0,
+                        "16th Count": 0.0,
+                        "17th Count": 0.0,
+                        "18th Count": 0.0,
+                        "19th Count": 0.0,
+                        "20th Count": 0.0,
+                        "21st Count": 0.0,
+                    },
+                ];
+
+                const groups = [
+                    "FLANAGAN, Luke 'Ming'*, Ind",
+                    "COWEN, Barry , FF",
+                    "CARBERRY, Nina, FG",
+                    "WALSH, Maria*, FG",
+                    "MULLOOLY, Ciaran, II",
+                    "GILDERNEW, Michelle, SF",
+                    "CHAMBERS, Lisa, FF",
+                    "TÓIBÍN, Peadar, Aontú",
+                    "BLANEY, Niall, FF",
+                    "MacMANUS, Chris*, SF",
+                    "CASEY, Peter, Ind",
+                    "McHUGH, Saoirse, Ind",
+                    "HEARNE, Rory, SD",
+                    "KELLY, Hermann, IFP",
+                    "O'REILLY, Pauline, Green",
+                    "WATERS, John, Ind",
+                    "LANDY, Fergal, Lab",
+                    "SMITH, Michelle, Ind",
+                    "CAHILL, Anthony, TIP",
+                    "BARRETT, Justin, NP",
+                    "O'BOYLE, Brian, PBP-Sol",
+                    "REYNOLDS, James, NP",
+                    "MAGUIRE, Margaret, IF",
+                    "WATERS, Gerry, Ind",
+                    "KEENAN, Charlotte, Ind",
+                    "GARLAND, Stephen, Ind",
+                    "POCOCK, Daniel, Ind",
+                ];
+                const subgroups = [
+                    "1st Count",
+                    "2nd Count",
+                    "3rd Count",
+                    "4th Count",
+                    "5th Count",
+                    "6th Count",
+                    "7th Count",
+                    "8th Count",
+                    "9th Count",
+                    "10th Count",
+                    "11th Count",
+                    "12th Count",
+                    "13th Count",
+                    "14th Count",
+                    "15th Count",
+                    "16th Count",
+                    "17th Count",
+                    "18th Count",
+                    "19th Count",
+                    "20th Count",
+                    "21st Count",
+                ];
+
+                const legend_labels = [
+                    "2nd Count: GARLAND, POCOCK, & KEENAN, all Ind, eliminated. ",
+                    "3rd Count: WATERS, Gerry, Ind, eliminated",
+                    "4th Count: MAGUIRE, Margaret, IF, eliminated",
+                    "5th Count: REYNOLDS, James, NP, eliminated",
+                    "6th Count: O'BOYLE, Brian, PBP-Sol, eliminated",
+                    "7th Count: BARRETT, Justin, NP, eliminated",
+                    "8th Count: CAHILL, Anthony, TIP, eliminated",
+                    "9th Count: SMITH, Michelle, Ind, eliminated",
+                    "10th Count: LANDY, Fergal, Lab, eliminated",
+                    "11th Count: O'REILLY, Pauline, Green, eliminated",
+                    "12th Count: WATERS, John, Ind, eliminated",
+                    "13th Count: HEARNE, Rory, SD, eliminated",
+                    "14th Count: KELLY, Hermann, IFP, eliminated",
+                    "15th Count: CASEY, Peter, Ind, eliminated",
+                    "16th Count: McHUGH, Saoirse, Ind, eliminated",
+                    "17th Count: BLANEY, Niall, FF, eliminated",
+                    "18th Count: MacMANUS, Chris*, SF, eliminated",
+                    "19th Count: FLANAGAN, Luke 'Ming'*, Ind elected. TÓIBÍN, Peadar, Aontú eliminated. ",
+                    "20th Count: COWEN, Barry, FF, elected. CHAMBERS, Lisa, FF, eliminated. ",
+                ];
+
+                const stack = d3.stack().keys(subgroups);
+                const stacked_data = stack(data);
+
+                // CREATE THE CANVAS AND PLOT OBJECTS
+                var canvas = d3
+                    .select("#canvas")
+                    .append("svg")
+                    .style("background", "white")
+                    .attr("height", height)
+                    .attr("width", width);
+
+                var plot = canvas
+                    .append("g")
+                    .attr(
+                        "transform",
+                        `translate(${margin.left},${margin.top})`,
+                    );
+
+                // scales
+                const scaleY = d3
+                    .scaleBand()
+                    .domain(groups)
+                    .range([0, plot_height])
+                    .padding(0.1);
+                const scaleX = d3
+                    .scaleLinear()
+                    .domain([0, xLIMIT]) //1.5e5
+                    .range([0, plot_width]);
+
+                const scaleColor = d3
+                    .scaleOrdinal()
+                    .domain(subgroups)
+                    .range(countColors);
+
+                var bars = plot
+                    .append("g")
+                    .selectAll("g")
+                    .data(stacked_data)
+                    .join("g")
+                    .attr("fill", (d) => scaleColor(d.key))
+                    .selectAll("rect")
+                    .data((d) => d)
+                    .join("rect")
+                    .attr("class", "bar")
+                    .attr("x", (d) => {
+                        return scaleX(d[0]);
+                    })
+                    .attr("y", (d) => {
+                        return scaleY(d.data.Candidate);
+                    })
+                    .attr("width", (d) => {
+                        return scaleX(d[1]) - scaleX(d[0]);
+                    })
+                    .attr("height", (d) => {
+                        return scaleY.bandwidth();
+                    });
+
+                // CREATE AND DRAW THE AXES
+                var xAx = d3.axisTop(scaleX);
+                var yAx = d3.axisLeft(scaleY);
+
+                plot.append("g")
+                    .attr("transform", `translate(0,0)`)
+                    .attr("class", "axes")
+                    .call(xAx);
+
+                plot.append("g")
+                    .attr("transform", `translate(0, 0)`)
+                    .attr("class", "axes")
+                    .call(yAx);
+
+                const linedata = [
+                    { x: QUOTA, y: plot_height },
+                    { x: QUOTA, y: 0 },
+                ];
+
+                const makeLine = d3
+                    .line()
+                    .x((d) => {
+                        return scaleX(d.x);
+                    })
+                    .y((d) => {
+                        return d.y;
+                    });
+
+                var targetLine = plot
+                    .append("path")
+                    .attr("d", makeLine(linedata))
+                    .attr("id", "quotaLine");
+
+                // legend
+
+                plot.selectAll("legend")
+                    .data(legend_labels)
+                    .enter()
+                    .append("text")
+                    .attr("class", "legend")
+                    .attr("x", width - 200)
+                    .attr("y", (d, i) => {
+                        return 150 + i * 20;
+                    })
+                    .style("fill", function (d, i) {
+                        return countColors[i];
+                    })
+                    .text(function (d) {
+                        return d;
+                    })
+                    .style("text-anchor", "end");
+
+                var tooltip = d3
+                    .select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                function tooltipText(name, value) {
+                    const label =
+                        name == "1st Count" ? "Votes" : "Transfers gained";
+                    return `<b>${name}</b><br>${label}: ${voteFormatter(value)}`;
+                }
+
+                bars.on("mouseover", function (e, d) {
+                    // 1. tooltip manifests
+                    tooltip.transition().duration(250).style("opacity", 1);
+
+                    // 2.
+                    const subgroupName = d3.select(this.parentNode).datum().key;
+                    const subgroupValue = d.data[subgroupName];
+
+                    tooltip
+                        .style("left", e.pageX + "px")
+                        .style("top", e.pageY + "px")
+                        .html((d) => tooltipText(subgroupName, subgroupValue));
+                }).on("mouseout", function (e, d) {
+                    tooltip.transition().duration(150).style("opacity", 0);
+                });
+            };
+        </script>
+    </head>
+
+    <body onload="draw()">
+        <h2></h2>
+        <h3></h3>
+        <div id="canvas"></div>
+    </body>
+</html>
