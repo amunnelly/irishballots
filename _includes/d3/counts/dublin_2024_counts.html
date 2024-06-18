@@ -72,10 +72,10 @@ path.link:hover{
   const countColors = ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5']
 
     // SET THE DIMENSIONS
-    const width = 1000;
+    const width = 1100;
     const height = 600;
     
-    const margin = {top: 50, bottom: 10, left: 175, right: 75}
+    const margin = {top: 50, bottom: 10, left: 175, right: 150}
     const plot_height = height - margin.top - margin.bottom;
     const plot_width = width - margin.left - margin.right;
 
@@ -85,6 +85,24 @@ path.link:hover{
     const groups = ["ANDREWS, Barry*, FF", "DOHERTY, Regina, FG", "BOYLAN, Lynn, SF", "CUFFE, Ciarán*, Green", "Ó RÍORDÁIN, Aodhán, Lab", "BOYLAN, Niall, II", "DALY, Clare*, I4C", "SMITH, Bríd, PBP-Sol", "GIBNEY, Sinéad, SD", "DOOLAN, Daithí, SF", "CONSIDINE, Aisling, Aontú", "STEENSON, Malachy, Ind", "AL-QADRI, Umar, Ind", "DWYER, Philip, IF", "Ó CONARÁIN, Diarmaid, IFP", "OGLE, Brendan, Ind", "BARRETT, Rebecca, NP", "QUINLAN, Patrick, NP", "CAFOLLA, Robin, Ind", "O'ROURKE, Stephen, Ind", "HEASMAN, Andy, TIP", "MURPHY, Eamonn, Ind", "MURPHY, Conor, Ind"];
 
     const subgroups = ["1st Count", "2nd Count", "3rd Count", "4th Count", "5th Count", "6th Count", "7th Count", "8th Count", "9th Count", "10th Count", "11th Count", "12th Count", "13th Count", "14th Count", "15th Count", "16th Count", "17th Count", "18th Count", "19th Count"];
+
+    const legend_labels = ["2nd: MURPHY, Conor, Ind, eliminated",
+"3rd: MURPHY, Eamonn, Ind, eliminated",
+"4th: HEASMAN, Andy, TIP, eliminated",
+"5th: O'ROURKE, Stephen, Ind, eliminated",
+"6th: CAFOLLA, Robin, Ind, eliminated",
+"7th: QUINLAN, Patrick, NP, eliminated",
+"8th: BARRETT, Rebecca, NP, eliminated",
+"9th: OGLE, Brendan, Ind, eliminated",
+"10th: Ó CONARÁIN, Diarmaid, IFP, eliminated",
+"11th: AL-QADRI, Umar, Ind, eliminated",
+"12th: DWYER, Philip, IF, eliminated",
+"13th: STEENSON, Malachy, Ind, eliminated",
+"14th: DOOLAN, Daithí, SF, eliminated",
+"15th: CONSIDINE, Aisling, Aontú, eliminated",
+"16th: GIBNEY, Sinéad, SD, eliminated",
+"17th: SMITH, Bríd, PBP-Sol, eliminated",
+"18th: DALY, Clare*, I4C, eliminated"]
 
     const stack = d3.stack().keys(subgroups);
     const stacked_data = stack(data);
@@ -150,11 +168,11 @@ var targetLine =   plot.append("path")
 // legend
 
 plot.selectAll("legend")
-    .data(subgroups)
+    .data(legend_labels)
     .enter()
     .append("text")
     .attr('class', 'legend')
-    .attr("x",  plot_width+65)
+    .attr("x",  width-175)
     .attr("y", (d,i)=>{return 20 + (i*20)})
     .style("fill", function(d, i){ return countColors[i]})
     .text(function(d){ return d})
