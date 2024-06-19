@@ -1,0 +1,177 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 14px;
+    /* fill: #fff; */
+    /* stroke: #000;
+    stroke-width: 1px; */
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 425px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+            // https://github.com/d3/d3-sankey v0.12.3 Copyright 2019 Mike Bostock
+!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("d3-array"),require("d3-shape")):"function"==typeof define&&define.amd?define(["exports","d3-array","d3-shape"],t):t((n=n||self).d3=n.d3||{},n.d3,n.d3)}(this,function(n,t,e){"use strict";function o(n){return n.target.depth}function r(n,t){return n.sourceLinks.length?n.depth:t-1}function i(n){return function(){return n}}function s(n,t){return u(n.source,t.source)||n.index-t.index}function f(n,t){return u(n.target,t.target)||n.index-t.index}function u(n,t){return n.y0-t.y0}function c(n){return n.value}function l(n){return n.index}function a(n){return n.nodes}function d(n){return n.links}function h(n,t){const e=n.get(t);if(!e)throw new Error("missing: "+t);return e}function g({nodes:n}){for(const t of n){let n=t.y0,e=n;for(const e of t.sourceLinks)e.y0=n+e.width/2,n+=e.width;for(const n of t.targetLinks)n.y1=e+n.width/2,e+=n.width}}function y(n){return[n.source.x1,n.y0]}function k(n){return[n.target.x0,n.y1]}n.sankey=function(){let n,e,o,y=0,k=0,L=1,p=1,w=24,x=8,m=l,v=r,M=a,b=d,S=6;function z(){const r={nodes:M.apply(null,arguments),links:b.apply(null,arguments)};return function({nodes:n,links:t}){for(const[t,e]of n.entries())e.index=t,e.sourceLinks=[],e.targetLinks=[];const e=new Map(n.map((t,e)=>[m(t,e,n),t]));for(const[n,o]of t.entries()){o.index=n;let{source:t,target:r}=o;"object"!=typeof t&&(t=o.source=h(e,t)),"object"!=typeof r&&(r=o.target=h(e,r)),t.sourceLinks.push(o),r.targetLinks.push(o)}if(null!=o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(o),e.sort(o)}(r),function({nodes:n}){for(const e of n)e.value=void 0===e.fixedValue?Math.max(t.sum(e.sourceLinks,c),t.sum(e.targetLinks,c)):e.fixedValue}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.depth=r;for(const{target:t}of n.sourceLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.height=r;for(const{source:t}of n.targetLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function(o){const r=function({nodes:n}){const o=t.max(n,n=>n.depth)+1,r=(L-y-w)/(o-1),i=new Array(o);for(const t of n){const n=Math.max(0,Math.min(o-1,Math.floor(v.call(null,t,o))));t.layer=n,t.x0=y+n*r,t.x1=t.x0+w,i[n]?i[n].push(t):i[n]=[t]}if(e)for(const n of i)n.sort(e);return i}(o);n=Math.min(x,(p-k)/(t.max(r,n=>n.length)-1)),function(e){const o=t.min(e,e=>(p-k-(e.length-1)*n)/t.sum(e,c));for(const t of e){let e=k;for(const r of t){r.y0=e,r.y1=e+r.value*o,e=r.y1+n;for(const n of r.sourceLinks)n.width=n.value*o}e=(p-e+n)/(t.length+1);for(let n=0;n<t.length;++n){const o=t[n];o.y0+=e*(n+1),o.y1+=e*(n+1)}V(t)}}(r);for(let n=0;n<S;++n){const t=Math.pow(.99,n),e=Math.max(1-t,(n+1)/S);E(r,t,e),j(r,t,e)}}(r),g(r),r}function j(n,t,o){for(let r=1,i=n.length;r<i;++r){const i=n[r];for(const n of i){let e=0,o=0;for(const{source:t,value:r}of n.targetLinks){let i=r*(n.layer-t.layer);e+=_(t,n)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function E(n,t,o){for(let r=n.length-2;r>=0;--r){const i=n[r];for(const n of i){let e=0,o=0;for(const{target:t,value:r}of n.sourceLinks){let i=r*(t.layer-n.layer);e+=C(n,t)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function q(t,e){const o=t.length>>1,r=t[o];H(t,r.y0-n,o-1,e),A(t,r.y1+n,o+1,e),H(t,p,t.length-1,e),A(t,k,0,e)}function A(t,e,o,r){for(;o<t.length;++o){const i=t[o],s=(e-i.y0)*r;s>1e-6&&(i.y0+=s,i.y1+=s),e=i.y1+n}}function H(t,e,o,r){for(;o>=0;--o){const i=t[o],s=(i.y1-e)*r;s>1e-6&&(i.y0-=s,i.y1-=s),e=i.y0-n}}function P({sourceLinks:n,targetLinks:t}){if(void 0===o){for(const{source:{sourceLinks:n}}of t)n.sort(f);for(const{target:{targetLinks:t}}of n)t.sort(s)}}function V(n){if(void 0===o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(f),e.sort(s)}function _(t,e){let o=t.y0-(t.sourceLinks.length-1)*n/2;for(const{target:r,width:i}of t.sourceLinks){if(r===e)break;o+=i+n}for(const{source:n,width:r}of e.targetLinks){if(n===t)break;o-=r}return o}function C(t,e){let o=e.y0-(e.targetLinks.length-1)*n/2;for(const{source:r,width:i}of e.targetLinks){if(r===t)break;o+=i+n}for(const{target:n,width:r}of t.sourceLinks){if(n===e)break;o-=r}return o}return z.update=function(n){return g(n),n},z.nodeId=function(n){return arguments.length?(m="function"==typeof n?n:i(n),z):m},z.nodeAlign=function(n){return arguments.length?(v="function"==typeof n?n:i(n),z):v},z.nodeSort=function(n){return arguments.length?(e=n,z):e},z.nodeWidth=function(n){return arguments.length?(w=+n,z):w},z.nodePadding=function(t){return arguments.length?(x=n=+t,z):x},z.nodes=function(n){return arguments.length?(M="function"==typeof n?n:i(n),z):M},z.links=function(n){return arguments.length?(b="function"==typeof n?n:i(n),z):b},z.linkSort=function(n){return arguments.length?(o=n,z):o},z.size=function(n){return arguments.length?(y=k=0,L=+n[0],p=+n[1],z):[L-y,p-k]},z.extent=function(n){return arguments.length?(y=+n[0][0],L=+n[1][0],k=+n[0][1],p=+n[1][1],z):[[y,k],[L,p]]},z.iterations=function(n){return arguments.length?(S=+n,z):S},z},n.sankeyCenter=function(n){return n.targetLinks.length?n.depth:n.sourceLinks.length?t.min(n.sourceLinks,o)-1:0},n.sankeyJustify=r,n.sankeyLeft=function(n){return n.depth},n.sankeyLinkHorizontal=function(){return e.linkHorizontal().source(y).target(k)},n.sankeyRight=function(n,t){return t-1-n.height},Object.defineProperty(n,"__esModule",{value:!0})});
+
+            const width = 850;
+            const height = 500;
+            const margin = { top: 10, right: 50, bottom: 25, left: 50 };
+
+
+            let labels = ['AON', 'FF', 'FG', 'GP', 'I4C', 'IF', 'IFP', 'II', 'IND', 'LAB', 'SD', 'SF', 'SOLP', 'TIP'];
+
+  let colors = ['#FFA233', '#4CBB17', '#0000FF', '#7CFC00', '#8f8b8f', '#8f8b8f', '#8f8b8f', '#66eded', '#1d1e3b', '#C41E3A', '#d52cde', '#93C572', '#FF0000', '#8f8b8f']
+;
+  
+  const data = {"nodes": [{"id": 0, "label": "FG"}, {"id": 1, "label": "GP"}, {"id": 2, "label": "IF"}, {"id": 3, "label": "SD"}, {"id": 4, "label": "II"}, {"id": 5, "label": "LAB"}, {"id": 6, "label": "IFP"}, {"id": 7, "label": "IND"}, {"id": 8, "label": "AON"}, {"id": 9, "label": "SF"}, {"id": 10, "label": "SOLP"}, {"id": 11, "label": "TIP"}, {"id": 12, "label": "FF"}, {"id": 13, "label": "I4C"}, {"id": 14, "label": "FF"}, {"id": 15, "label": "I4C"}, {"id": 16, "label": "IND"}, {"id": 17, "label": "GP"}, {"id": 18, "label": "SF"}, {"id": 19, "label": "IF"}, {"id": 20, "label": "SD"}, {"id": 21, "label": "IFP"}, {"id": 22, "label": "II"}, {"id": 23, "label": "LAB"}, {"id": 24, "label": "AON"}, {"id": 25, "label": "FG"}, {"id": 26, "label": "SOLP"}, {"id": 27, "label": "TIP"}], "links": [{"source": 0, "target": 14, "value": 21329.0, "share": 0.1}, {"source": 1, "target": 14, "value": 16602.0, "share": 0.07}, {"source": 1, "target": 15, "value": 10210.0, "share": 0.05}, {"source": 2, "target": 16, "value": 8132.0, "share": 0.04}, {"source": 3, "target": 17, "value": 7675.0, "share": 0.03}, {"source": 1, "target": 18, "value": 7562.0, "share": 0.03}, {"source": 4, "target": 16, "value": 6690.0, "share": 0.03}, {"source": 1, "target": 16, "value": 5329.0, "share": 0.02}, {"source": 5, "target": 14, "value": 5057.0, "share": 0.02}, {"source": 0, "target": 17, "value": 4879.0, "share": 0.02}, {"source": 2, "target": 15, "value": 4764.0, "share": 0.02}, {"source": 3, "target": 18, "value": 4616.0, "share": 0.02}, {"source": 2, "target": 18, "value": 4571.0, "share": 0.02}, {"source": 4, "target": 14, "value": 4420.0, "share": 0.02}, {"source": 3, "target": 14, "value": 4380.0, "share": 0.02}, {"source": 6, "target": 19, "value": 4225.0, "share": 0.02}, {"source": 7, "target": 20, "value": 3967.0, "share": 0.02}, {"source": 0, "target": 16, "value": 3878.0, "share": 0.02}, {"source": 7, "target": 14, "value": 3379.0, "share": 0.02}, {"source": 5, "target": 17, "value": 3331.0, "share": 0.01}, {"source": 4, "target": 15, "value": 2969.0, "share": 0.01}, {"source": 5, "target": 20, "value": 2864.0, "share": 0.01}, {"source": 7, "target": 19, "value": 2779.0, "share": 0.01}, {"source": 7, "target": 18, "value": 2704.0, "share": 0.01}, {"source": 2, "target": 14, "value": 2620.0, "share": 0.01}, {"source": 3, "target": 15, "value": 2509.0, "share": 0.01}, {"source": 6, "target": 16, "value": 2306.0, "share": 0.01}, {"source": 8, "target": 14, "value": 2297.0, "share": 0.01}, {"source": 5, "target": 18, "value": 2201.0, "share": 0.01}, {"source": 0, "target": 15, "value": 2194.0, "share": 0.01}, {"source": 8, "target": 16, "value": 2170.0, "share": 0.01}, {"source": 7, "target": 15, "value": 2166.0, "share": 0.01}, {"source": 7, "target": 21, "value": 2162.0, "share": 0.01}, {"source": 4, "target": 19, "value": 2003.0, "share": 0.01}, {"source": 5, "target": 16, "value": 1895.0, "share": 0.01}, {"source": 7, "target": 17, "value": 1770.0, "share": 0.01}, {"source": 8, "target": 19, "value": 1725.0, "share": 0.01}, {"source": 8, "target": 22, "value": 1712.0, "share": 0.01}, {"source": 7, "target": 23, "value": 1674.0, "share": 0.01}, {"source": 6, "target": 24, "value": 1610.0, "share": 0.01}, {"source": 9, "target": 14, "value": 1575.0, "share": 0.01}, {"source": 5, "target": 25, "value": 1575.0, "share": 0.01}, {"source": 4, "target": 25, "value": 1565.0, "share": 0.01}, {"source": 8, "target": 15, "value": 1522.0, "share": 0.01}, {"source": 3, "target": 25, "value": 1434.0, "share": 0.01}, {"source": 3, "target": 16, "value": 1373.0, "share": 0.01}, {"source": 7, "target": 24, "value": 1317.0, "share": 0.01}, {"source": 0, "target": 18, "value": 1310.0, "share": 0.01}, {"source": 6, "target": 22, "value": 1272.0, "share": 0.01}, {"source": 10, "target": 15, "value": 1214.0, "share": 0.01}, {"source": 8, "target": 18, "value": 1156.0, "share": 0.01}, {"source": 9, "target": 15, "value": 1121.0, "share": 0.01}, {"source": 5, "target": 15, "value": 1036.0, "share": null}, {"source": 6, "target": 15, "value": 1010.0, "share": null}, {"source": 3, "target": 19, "value": 883.0, "share": null}, {"source": 7, "target": 25, "value": 870.0, "share": null}, {"source": 9, "target": 16, "value": 851.0, "share": null}, {"source": 10, "target": 16, "value": 802.0, "share": null}, {"source": 11, "target": 19, "value": 791.0, "share": null}, {"source": 12, "target": 16, "value": 785.0, "share": null}, {"source": 7, "target": 22, "value": 777.0, "share": null}, {"source": 10, "target": 18, "value": 774.0, "share": null}, {"source": 2, "target": 25, "value": 770.0, "share": null}, {"source": 10, "target": 20, "value": 763.0, "share": null}, {"source": 12, "target": 17, "value": 756.0, "share": null}, {"source": 8, "target": 25, "value": 738.0, "share": null}, {"source": 4, "target": 18, "value": 731.0, "share": null}, {"source": 6, "target": 14, "value": 728.0, "share": null}, {"source": 8, "target": 17, "value": 714.0, "share": null}, {"source": 4, "target": 17, "value": 682.0, "share": null}, {"source": 6, "target": 18, "value": 658.0, "share": null}, {"source": 11, "target": 21, "value": 601.0, "share": null}, {"source": 2, "target": 17, "value": 588.0, "share": null}, {"source": 11, "target": 16, "value": 588.0, "share": null}, {"source": 9, "target": 20, "value": 574.0, "share": null}, {"source": 5, "target": 22, "value": 566.0, "share": null}, {"source": 10, "target": 17, "value": 563.0, "share": null}, {"source": 9, "target": 19, "value": 472.0, "share": null}, {"source": 8, "target": 20, "value": 472.0, "share": null}, {"source": 4, "target": 20, "value": 454.0, "share": null}, {"source": 5, "target": 19, "value": 431.0, "share": null}, {"source": 10, "target": 22, "value": 408.0, "share": null}, {"source": 11, "target": 15, "value": 406.0, "share": null}, {"source": 11, "target": 18, "value": 393.0, "share": null}, {"source": 9, "target": 22, "value": 380.0, "share": null}, {"source": 9, "target": 17, "value": 357.0, "share": null}, {"source": 10, "target": 23, "value": 346.0, "share": null}, {"source": 10, "target": 14, "value": 341.0, "share": null}, {"source": 8, "target": 23, "value": 319.0, "share": null}, {"source": 9, "target": 25, "value": 307.0, "share": null}, {"source": 0, "target": 23, "value": 274.0, "share": null}, {"source": 7, "target": 26, "value": 242.0, "share": null}, {"source": 12, "target": 15, "value": 233.0, "share": null}, {"source": 6, "target": 25, "value": 228.0, "share": null}, {"source": 11, "target": 14, "value": 219.0, "share": null}, {"source": 6, "target": 23, "value": 213.0, "share": null}, {"source": 12, "target": 18, "value": 193.0, "share": null}, {"source": 10, "target": 19, "value": 188.0, "share": null}, {"source": 0, "target": 22, "value": 169.0, "share": null}, {"source": 10, "target": 24, "value": 164.0, "share": null}, {"source": 6, "target": 17, "value": 156.0, "share": null}, {"source": 7, "target": 27, "value": 144.0, "share": null}, {"source": 11, "target": 26, "value": 134.0, "share": null}, {"source": 11, "target": 22, "value": 132.0, "share": null}, {"source": 11, "target": 24, "value": 131.0, "share": null}, {"source": 6, "target": 20, "value": 115.0, "share": null}, {"source": 0, "target": 20, "value": 115.0, "share": null}, {"source": 11, "target": 23, "value": 113.0, "share": null}, {"source": 11, "target": 25, "value": 113.0, "share": null}, {"source": 10, "target": 21, "value": 100.0, "share": null}, {"source": 10, "target": 25, "value": 87.0, "share": null}, {"source": 0, "target": 24, "value": 75.0, "share": null}, {"source": 11, "target": 17, "value": 65.0, "share": null}, {"source": 11, "target": 20, "value": 64.0, "share": null}, {"source": 0, "target": 21, "value": 61.0, "share": null}, {"source": 0, "target": 19, "value": 57.0, "share": null}, {"source": 0, "target": 26, "value": 31.0, "share": null}, {"source": 0, "target": 27, "value": 31.0, "share": null}, {"source": 6, "target": 26, "value": 0.0, "share": null}, {"source": 6, "target": 27, "value": 0.0, "share": null}, {"source": 5, "target": 27, "value": 0.0, "share": null}, {"source": 13, "target": 25, "value": 0.0, "share": null}, {"source": 1, "target": 25, "value": 0.0, "share": null}, {"source": 1, "target": 19, "value": 0.0, "share": null}, {"source": 1, "target": 23, "value": 0.0, "share": null}, {"source": 1, "target": 22, "value": 0.0, "share": null}, {"source": 1, "target": 20, "value": 0.0, "share": null}, {"source": 13, "target": 14, "value": 0.0, "share": null}, {"source": 9, "target": 23, "value": 0.0, "share": null}, {"source": 9, "target": 27, "value": 0.0, "share": null}, {"source": 9, "target": 26, "value": 0.0, "share": null}, {"source": 9, "target": 21, "value": 0.0, "share": null}, {"source": 9, "target": 24, "value": 0.0, "share": null}, {"source": 1, "target": 21, "value": 0.0, "share": null}, {"source": 13, "target": 16, "value": 0.0, "share": null}, {"source": 13, "target": 27, "value": 0.0, "share": null}, {"source": 13, "target": 26, "value": 0.0, "share": null}, {"source": 10, "target": 27, "value": 0.0, "share": null}, {"source": 13, "target": 21, "value": 0.0, "share": null}, {"source": 13, "target": 24, "value": 0.0, "share": null}, {"source": 13, "target": 20, "value": 0.0, "share": null}, {"source": 13, "target": 22, "value": 0.0, "share": null}, {"source": 13, "target": 23, "value": 0.0, "share": null}, {"source": 13, "target": 19, "value": 0.0, "share": null}, {"source": 1, "target": 24, "value": 0.0, "share": null}, {"source": 8, "target": 27, "value": 0.0, "share": null}, {"source": 1, "target": 26, "value": 0.0, "share": null}, {"source": 1, "target": 27, "value": 0.0, "share": null}, {"source": 12, "target": 26, "value": 0.0, "share": null}, {"source": 12, "target": 21, "value": 0.0, "share": null}, {"source": 12, "target": 24, "value": 0.0, "share": null}, {"source": 4, "target": 27, "value": 0.0, "share": null}, {"source": 4, "target": 26, "value": 0.0, "share": null}, {"source": 4, "target": 21, "value": 0.0, "share": null}, {"source": 4, "target": 24, "value": 0.0, "share": null}, {"source": 13, "target": 17, "value": 0.0, "share": null}, {"source": 4, "target": 23, "value": 0.0, "share": null}, {"source": 12, "target": 20, "value": 0.0, "share": null}, {"source": 12, "target": 22, "value": 0.0, "share": null}, {"source": 12, "target": 23, "value": 0.0, "share": null}, {"source": 5, "target": 24, "value": 0.0, "share": null}, {"source": 5, "target": 21, "value": 0.0, "share": null}, {"source": 12, "target": 19, "value": 0.0, "share": null}, {"source": 12, "target": 25, "value": 0.0, "share": null}, {"source": 2, "target": 27, "value": 0.0, "share": null}, {"source": 3, "target": 23, "value": 0.0, "share": null}, {"source": 2, "target": 20, "value": 0.0, "share": null}, {"source": 5, "target": 26, "value": 0.0, "share": null}, {"source": 8, "target": 26, "value": 0.0, "share": null}, {"source": 8, "target": 21, "value": 0.0, "share": null}, {"source": 12, "target": 27, "value": 0.0, "share": null}, {"source": 2, "target": 23, "value": 0.0, "share": null}, {"source": 2, "target": 22, "value": 0.0, "share": null}, {"source": 2, "target": 24, "value": 0.0, "share": null}, {"source": 3, "target": 22, "value": 0.0, "share": null}, {"source": 2, "target": 21, "value": 0.0, "share": null}, {"source": 2, "target": 26, "value": 0.0, "share": null}, {"source": 3, "target": 27, "value": 0.0, "share": null}, {"source": 3, "target": 26, "value": 0.0, "share": null}, {"source": 3, "target": 21, "value": 0.0, "share": null}, {"source": 3, "target": 24, "value": 0.0, "share": null}, {"source": 13, "target": 18, "value": 0.0, "share": null}]};
+            
+  let scaleColor = d3.scaleOrdinal().domain(labels).range(colors);
+
+            const voteFormatter = d3.format(",");
+
+            const svg = d3
+                .select("#canvas")
+                .append("svg")
+                .attr("width", width)
+                .attr("background", "aliceblue")
+                .attr("height", height);
+
+            const plot = svg
+                .append("g")
+                .attr("transform", `translate(${[margin.top, margin.left]})`);
+
+            // The sankey object
+            const sankey = d3
+                .sankey()
+                .size([width, height])
+                .nodeId((d) => d.id)
+                .nodeWidth(40)
+                .nodePadding(5)
+                .nodeAlign(d3.sankeyCenter);
+
+            // calling the sankey object
+            let graph = sankey(data);
+
+            // plotting the links
+            let links = plot
+                .append("g")
+                .classed("links", true)
+                .selectAll("path")
+                .data(graph.links)
+                .enter()
+                .append("path")
+                .classed("link", true)
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("fill", "none")
+                .attr("stroke", (d) => {
+                    return scaleColor(d.source.label);
+                })
+                .attr("stroke-width", (d) => d.width)
+                .attr("stoke-opacity", 0.5);
+
+            // plotting the nodes
+            let nodes = plot
+                .append("g")
+                .classed("nodes", true)
+                .selectAll("rect")
+                .data(graph.nodes)
+                .enter()
+                .append("rect")
+                .classed("node", true)
+                .attr("x", (d) => d.x0)
+                .attr("y", (d) => d.y0)
+                .attr("width", (d) => d.x1 - d.x0)
+                .attr("height", (d) => d.y1 - d.y0)
+                .attr("fill", (d) => {
+                    return scaleColor(d.label);
+                });
+
+                let zod = plot
+    .selectAll("text")
+    .data(data.nodes)
+    .enter()
+    .append("text")
+    .attr("x", (d) => (d.x1 + d.x0 < width / 2 ? (d.x1 + d.x0) / 2 : d.x0))
+    .attr("y", (d) => (d.y1 + d.y0) / 2)
+    .style("text-anchor", (d) => (d.x1 + d.x0 < width / 2 ? "start" : "end"))
+    .text((d) => d.label);
+
+  // tooltip
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  // plot.selectAll('path.link')
+  links
+    .on("mouseover", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0.75);
+
+      tooltip
+        .html(htmlFormatter(d))
+        .style("left", e.pageX + "px")
+        .style("top", e.pageY + "px");
+    })
+    .on("mouseout", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0);
+    });
+
+  function htmlFormatter(d) {
+    // return `${d.value} votes transferred from ${d.source.label} to ${d.target.label}`;
+
+    return `${d.source.label} transferred ${voteFormatter(d.value)} votes to ${d.target.label}`;
+  }
+        }
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

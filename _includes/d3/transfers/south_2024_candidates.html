@@ -1,0 +1,213 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        h2{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+}
+
+h3{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+}
+
+
+g text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    font-size: 16px;
+    fill: #000;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 450px;
+    height: 25px;
+    padding: 4px;
+    font: 16px sans-serif;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 8px;
+    pointer-events: none;
+    }
+
+path.link{
+    opacity: 0.5;
+}
+
+table{
+    font-size: small;
+}
+
+path.link:hover{
+    opacity: 0.75;
+}
+    </style>
+    <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+    <script>
+        const draw = () => {
+            // https://github.com/d3/d3-sankey v0.12.3 Copyright 2019 Mike Bostock
+!function(n,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports,require("d3-array"),require("d3-shape")):"function"==typeof define&&define.amd?define(["exports","d3-array","d3-shape"],t):t((n=n||self).d3=n.d3||{},n.d3,n.d3)}(this,function(n,t,e){"use strict";function o(n){return n.target.depth}function r(n,t){return n.sourceLinks.length?n.depth:t-1}function i(n){return function(){return n}}function s(n,t){return u(n.source,t.source)||n.index-t.index}function f(n,t){return u(n.target,t.target)||n.index-t.index}function u(n,t){return n.y0-t.y0}function c(n){return n.value}function l(n){return n.index}function a(n){return n.nodes}function d(n){return n.links}function h(n,t){const e=n.get(t);if(!e)throw new Error("missing: "+t);return e}function g({nodes:n}){for(const t of n){let n=t.y0,e=n;for(const e of t.sourceLinks)e.y0=n+e.width/2,n+=e.width;for(const n of t.targetLinks)n.y1=e+n.width/2,e+=n.width}}function y(n){return[n.source.x1,n.y0]}function k(n){return[n.target.x0,n.y1]}n.sankey=function(){let n,e,o,y=0,k=0,L=1,p=1,w=24,x=8,m=l,v=r,M=a,b=d,S=6;function z(){const r={nodes:M.apply(null,arguments),links:b.apply(null,arguments)};return function({nodes:n,links:t}){for(const[t,e]of n.entries())e.index=t,e.sourceLinks=[],e.targetLinks=[];const e=new Map(n.map((t,e)=>[m(t,e,n),t]));for(const[n,o]of t.entries()){o.index=n;let{source:t,target:r}=o;"object"!=typeof t&&(t=o.source=h(e,t)),"object"!=typeof r&&(r=o.target=h(e,r)),t.sourceLinks.push(o),r.targetLinks.push(o)}if(null!=o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(o),e.sort(o)}(r),function({nodes:n}){for(const e of n)e.value=void 0===e.fixedValue?Math.max(t.sum(e.sourceLinks,c),t.sum(e.targetLinks,c)):e.fixedValue}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.depth=r;for(const{target:t}of n.sourceLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function({nodes:n}){const t=n.length;let e=new Set(n),o=new Set,r=0;for(;e.size;){for(const n of e){n.height=r;for(const{source:t}of n.targetLinks)o.add(t)}if(++r>t)throw new Error("circular link");e=o,o=new Set}}(r),function(o){const r=function({nodes:n}){const o=t.max(n,n=>n.depth)+1,r=(L-y-w)/(o-1),i=new Array(o);for(const t of n){const n=Math.max(0,Math.min(o-1,Math.floor(v.call(null,t,o))));t.layer=n,t.x0=y+n*r,t.x1=t.x0+w,i[n]?i[n].push(t):i[n]=[t]}if(e)for(const n of i)n.sort(e);return i}(o);n=Math.min(x,(p-k)/(t.max(r,n=>n.length)-1)),function(e){const o=t.min(e,e=>(p-k-(e.length-1)*n)/t.sum(e,c));for(const t of e){let e=k;for(const r of t){r.y0=e,r.y1=e+r.value*o,e=r.y1+n;for(const n of r.sourceLinks)n.width=n.value*o}e=(p-e+n)/(t.length+1);for(let n=0;n<t.length;++n){const o=t[n];o.y0+=e*(n+1),o.y1+=e*(n+1)}V(t)}}(r);for(let n=0;n<S;++n){const t=Math.pow(.99,n),e=Math.max(1-t,(n+1)/S);E(r,t,e),j(r,t,e)}}(r),g(r),r}function j(n,t,o){for(let r=1,i=n.length;r<i;++r){const i=n[r];for(const n of i){let e=0,o=0;for(const{source:t,value:r}of n.targetLinks){let i=r*(n.layer-t.layer);e+=_(t,n)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function E(n,t,o){for(let r=n.length-2;r>=0;--r){const i=n[r];for(const n of i){let e=0,o=0;for(const{target:t,value:r}of n.sourceLinks){let i=r*(t.layer-n.layer);e+=C(n,t)*i,o+=i}if(!(o>0))continue;let r=(e/o-n.y0)*t;n.y0+=r,n.y1+=r,P(n)}void 0===e&&i.sort(u),q(i,o)}}function q(t,e){const o=t.length>>1,r=t[o];H(t,r.y0-n,o-1,e),A(t,r.y1+n,o+1,e),H(t,p,t.length-1,e),A(t,k,0,e)}function A(t,e,o,r){for(;o<t.length;++o){const i=t[o],s=(e-i.y0)*r;s>1e-6&&(i.y0+=s,i.y1+=s),e=i.y1+n}}function H(t,e,o,r){for(;o>=0;--o){const i=t[o],s=(i.y1-e)*r;s>1e-6&&(i.y0-=s,i.y1-=s),e=i.y0-n}}function P({sourceLinks:n,targetLinks:t}){if(void 0===o){for(const{source:{sourceLinks:n}}of t)n.sort(f);for(const{target:{targetLinks:t}}of n)t.sort(s)}}function V(n){if(void 0===o)for(const{sourceLinks:t,targetLinks:e}of n)t.sort(f),e.sort(s)}function _(t,e){let o=t.y0-(t.sourceLinks.length-1)*n/2;for(const{target:r,width:i}of t.sourceLinks){if(r===e)break;o+=i+n}for(const{source:n,width:r}of e.targetLinks){if(n===t)break;o-=r}return o}function C(t,e){let o=e.y0-(e.targetLinks.length-1)*n/2;for(const{source:r,width:i}of e.targetLinks){if(r===t)break;o+=i+n}for(const{target:n,width:r}of t.sourceLinks){if(n===e)break;o-=r}return o}return z.update=function(n){return g(n),n},z.nodeId=function(n){return arguments.length?(m="function"==typeof n?n:i(n),z):m},z.nodeAlign=function(n){return arguments.length?(v="function"==typeof n?n:i(n),z):v},z.nodeSort=function(n){return arguments.length?(e=n,z):e},z.nodeWidth=function(n){return arguments.length?(w=+n,z):w},z.nodePadding=function(t){return arguments.length?(x=n=+t,z):x},z.nodes=function(n){return arguments.length?(M="function"==typeof n?n:i(n),z):M},z.links=function(n){return arguments.length?(b="function"==typeof n?n:i(n),z):b},z.linkSort=function(n){return arguments.length?(o=n,z):o},z.size=function(n){return arguments.length?(y=k=0,L=+n[0],p=+n[1],z):[L-y,p-k]},z.extent=function(n){return arguments.length?(y=+n[0][0],L=+n[1][0],k=+n[0][1],p=+n[1][1],z):[[y,k],[L,p]]},z.iterations=function(n){return arguments.length?(S=+n,z):S},z},n.sankeyCenter=function(n){return n.targetLinks.length?n.depth:n.sourceLinks.length?t.min(n.sourceLinks,o)-1:0},n.sankeyJustify=r,n.sankeyLeft=function(n){return n.depth},n.sankeyLinkHorizontal=function(){return e.linkHorizontal().source(y).target(k)},n.sankeyRight=function(n,t){return t-1-n.height},Object.defineProperty(n,"__esModule",{value:!0})});
+
+// plot dimensions
+  const width = 850;
+  const height = 600;
+  const margin = { top: 10, right: 50, bottom: 25, left: 50 };
+  const LABEL_HEIGHT_LIMIT = 10;
+
+const data = {"nodes": [{"id": 0, "label": "fg_sean_kelly"}, {"id": 1, "label": "ind_ciaran_o_riordan"}, {"id": 2, "label": "ind_christopher_doyle"}, {"id": 3, "label": "tip_ross_lahive"}, {"id": 4, "label": "ind_graham_de_barra"}, {"id": 5, "label": "pbp-sol_cian_prendiville"}, {"id": 6, "label": "ind_una_mcgurk"}, {"id": 7, "label": "ind_mary_fitzgibbon"}, {"id": 8, "label": "ind_lorna_bogue"}, {"id": 9, "label": "ifp_michael_leahy"}, {"id": 10, "label": "aontú_patrick_murphy"}, {"id": 11, "label": "lab_niamh_hourigan"}, {"id": 12, "label": "sf_paul_gavan"}, {"id": 13, "label": "ii_eddie_punch"}, {"id": 14, "label": "sd_susan_doyle"}, {"id": 15, "label": "if_derek_blighe"}, {"id": 16, "label": "fg_john_mullins"}, {"id": 17, "label": "ff_billy_kelleher"}, {"id": 18, "label": "green_grace_o_sullivan"}, {"id": 19, "label": "ff_billy_kelleher"}, {"id": 20, "label": "ind_michael_mcnamara"}, {"id": 21, "label": "ff_cynthia_ni_mhurchu"}, {"id": 22, "label": "i4c_mick_wallace"}, {"id": 23, "label": "sf_kathleen_funchion"}, {"id": 24, "label": "green_grace_o_sullivan"}, {"id": 25, "label": "fg_john_mullins"}, {"id": 26, "label": "if_derek_blighe"}, {"id": 27, "label": "sf_paul_gavan"}, {"id": 28, "label": "lab_niamh_hourigan"}, {"id": 29, "label": "ii_eddie_punch"}, {"id": 30, "label": "sd_susan_doyle"}, {"id": 31, "label": "aontú_patrick_murphy"}, {"id": 32, "label": "ifp_michael_leahy"}, {"id": 33, "label": "ind_lorna_bogue"}, {"id": 34, "label": "ind_una_mcgurk"}, {"id": 35, "label": "ind_mary_fitzgibbon"}, {"id": 36, "label": "pbp-sol_cian_prendiville"}, {"id": 37, "label": "ind_graham_de_barra"}, {"id": 38, "label": "tip_ross_lahive"}, {"id": 39, "label": "ind_christopher_doyle"}, {"id": 40, "label": "ind_ciaran_o_riordan"}, {"id": 41, "label": "fg_sean_kelly"}], "links": [{"source": 0, "target": 19, "value": 1963.0, "share": 0.24}, {"source": 0, "target": 20, "value": 523.0, "share": 0.07}, {"source": 0, "target": 21, "value": 770.0, "share": 0.1}, {"source": 0, "target": 22, "value": 390.0, "share": 0.05}, {"source": 0, "target": 23, "value": 143.0, "share": 0.02}, {"source": 0, "target": 24, "value": 361.0, "share": 0.05}, {"source": 0, "target": 25, "value": 2633.0, "share": 0.33}, {"source": 0, "target": 26, "value": 57.0, "share": 0.01}, {"source": 0, "target": 27, "value": 120.0, "share": 0.01}, {"source": 0, "target": 28, "value": 274.0, "share": 0.03}, {"source": 0, "target": 29, "value": 169.0, "share": 0.02}, {"source": 0, "target": 30, "value": 115.0, "share": 0.01}, {"source": 0, "target": 31, "value": 75.0, "share": 0.01}, {"source": 0, "target": 32, "value": 61.0, "share": 0.01}, {"source": 0, "target": 33, "value": 56.0, "share": 0.01}, {"source": 0, "target": 34, "value": 82.0, "share": 0.01}, {"source": 0, "target": 35, "value": 98.0, "share": 0.01}, {"source": 0, "target": 36, "value": 31.0, "share": null}, {"source": 0, "target": 37, "value": 32.0, "share": null}, {"source": 0, "target": 38, "value": 31.0, "share": null}, {"source": 0, "target": 39, "value": 24.0, "share": null}, {"source": 0, "target": 40, "value": 8.0, "share": null}, {"source": 1, "target": 41, "value": 0.0, "share": null}, {"source": 1, "target": 19, "value": 47.0, "share": 0.02}, {"source": 1, "target": 20, "value": 292.0, "share": 0.12}, {"source": 1, "target": 21, "value": 69.0, "share": 0.03}, {"source": 1, "target": 22, "value": 235.0, "share": 0.09}, {"source": 1, "target": 23, "value": 32.0, "share": 0.01}, {"source": 1, "target": 24, "value": 71.0, "share": 0.03}, {"source": 1, "target": 25, "value": 37.0, "share": 0.01}, {"source": 1, "target": 26, "value": 135.0, "share": 0.05}, {"source": 1, "target": 27, "value": 18.0, "share": 0.01}, {"source": 1, "target": 28, "value": 20.0, "share": 0.01}, {"source": 1, "target": 29, "value": 95.0, "share": 0.04}, {"source": 1, "target": 30, "value": 28.0, "share": 0.01}, {"source": 1, "target": 31, "value": 185.0, "share": 0.07}, {"source": 1, "target": 32, "value": 156.0, "share": 0.06}, {"source": 1, "target": 33, "value": 72.0, "share": 0.03}, {"source": 1, "target": 34, "value": 115.0, "share": 0.05}, {"source": 1, "target": 35, "value": 199.0, "share": 0.08}, {"source": 1, "target": 36, "value": 66.0, "share": 0.03}, {"source": 1, "target": 37, "value": 77.0, "share": 0.03}, {"source": 1, "target": 38, "value": 82.0, "share": 0.03}, {"source": 1, "target": 39, "value": 38.0, "share": 0.02}, {"source": 2, "target": 41, "value": 0.0, "share": null}, {"source": 2, "target": 19, "value": 206.0, "share": 0.06}, {"source": 2, "target": 20, "value": 144.0, "share": 0.04}, {"source": 2, "target": 21, "value": 211.0, "share": 0.06}, {"source": 2, "target": 22, "value": 273.0, "share": 0.08}, {"source": 2, "target": 23, "value": 200.0, "share": 0.06}, {"source": 2, "target": 24, "value": 146.0, "share": 0.04}, {"source": 2, "target": 25, "value": 204.0, "share": 0.06}, {"source": 2, "target": 26, "value": 138.0, "share": 0.04}, {"source": 2, "target": 27, "value": 87.0, "share": 0.02}, {"source": 2, "target": 28, "value": 143.0, "share": 0.04}, {"source": 2, "target": 29, "value": 62.0, "share": 0.02}, {"source": 2, "target": 30, "value": 194.0, "share": 0.05}, {"source": 2, "target": 31, "value": 33.0, "share": 0.01}, {"source": 2, "target": 32, "value": 51.0, "share": 0.01}, {"source": 2, "target": 33, "value": 111.0, "share": 0.03}, {"source": 2, "target": 34, "value": 44.0, "share": 0.01}, {"source": 2, "target": 35, "value": 561.0, "share": 0.16}, {"source": 2, "target": 36, "value": 42.0, "share": 0.01}, {"source": 2, "target": 37, "value": 126.0, "share": 0.04}, {"source": 2, "target": 38, "value": 62.0, "share": 0.02}, {"source": 2, "target": 40, "value": 0.0, "share": null}, {"source": 3, "target": 41, "value": 0.0, "share": null}, {"source": 3, "target": 19, "value": 98.0, "share": 0.02}, {"source": 3, "target": 20, "value": 199.0, "share": 0.04}, {"source": 3, "target": 21, "value": 121.0, "share": 0.03}, {"source": 3, "target": 22, "value": 406.0, "share": 0.09}, {"source": 3, "target": 23, "value": 221.0, "share": 0.05}, {"source": 3, "target": 24, "value": 65.0, "share": 0.01}, {"source": 3, "target": 25, "value": 113.0, "share": 0.02}, {"source": 3, "target": 26, "value": 791.0, "share": 0.17}, {"source": 3, "target": 27, "value": 172.0, "share": 0.04}, {"source": 3, "target": 28, "value": 113.0, "share": 0.02}, {"source": 3, "target": 29, "value": 132.0, "share": 0.03}, {"source": 3, "target": 30, "value": 64.0, "share": 0.01}, {"source": 3, "target": 31, "value": 131.0, "share": 0.03}, {"source": 3, "target": 32, "value": 601.0, "share": 0.13}, {"source": 3, "target": 33, "value": 59.0, "share": 0.01}, {"source": 3, "target": 35, "value": 133.0, "share": 0.03}, {"source": 3, "target": 34, "value": 101.0, "share": 0.02}, {"source": 3, "target": 36, "value": 134.0, "share": 0.03}, {"source": 3, "target": 37, "value": 96.0, "share": 0.02}, {"source": 3, "target": 39, "value": 0.0, "share": null}, {"source": 3, "target": 40, "value": 0.0, "share": null}, {"source": 4, "target": 41, "value": 0.0, "share": null}, {"source": 4, "target": 19, "value": 287.0, "share": 0.06}, {"source": 4, "target": 20, "value": 136.0, "share": 0.03}, {"source": 4, "target": 21, "value": 161.0, "share": 0.03}, {"source": 4, "target": 22, "value": 279.0, "share": 0.06}, {"source": 4, "target": 23, "value": 325.0, "share": 0.07}, {"source": 4, "target": 24, "value": 272.0, "share": 0.06}, {"source": 4, "target": 25, "value": 105.0, "share": 0.02}, {"source": 4, "target": 26, "value": 372.0, "share": 0.08}, {"source": 4, "target": 27, "value": 106.0, "share": 0.02}, {"source": 4, "target": 28, "value": 184.0, "share": 0.04}, {"source": 4, "target": 29, "value": 46.0, "share": 0.01}, {"source": 4, "target": 30, "value": 599.0, "share": 0.12}, {"source": 4, "target": 31, "value": 90.0, "share": 0.02}, {"source": 4, "target": 32, "value": 73.0, "share": 0.01}, {"source": 4, "target": 33, "value": 498.0, "share": 0.1}, {"source": 4, "target": 35, "value": 412.0, "share": 0.08}, {"source": 4, "target": 34, "value": 99.0, "share": 0.02}, {"source": 4, "target": 36, "value": 134.0, "share": 0.03}, {"source": 4, "target": 39, "value": 0.0, "share": null}, {"source": 4, "target": 40, "value": 0.0, "share": null}, {"source": 4, "target": 38, "value": 0.0, "share": null}, {"source": 5, "target": 41, "value": 0.0, "share": null}, {"source": 5, "target": 19, "value": 102.0, "share": 0.02}, {"source": 5, "target": 20, "value": 176.0, "share": 0.03}, {"source": 5, "target": 21, "value": 239.0, "share": 0.04}, {"source": 5, "target": 22, "value": 1214.0, "share": 0.18}, {"source": 5, "target": 23, "value": 483.0, "share": 0.07}, {"source": 5, "target": 24, "value": 563.0, "share": 0.08}, {"source": 5, "target": 25, "value": 87.0, "share": 0.01}, {"source": 5, "target": 26, "value": 188.0, "share": 0.03}, {"source": 5, "target": 27, "value": 291.0, "share": 0.04}, {"source": 5, "target": 28, "value": 346.0, "share": 0.05}, {"source": 5, "target": 29, "value": 408.0, "share": 0.06}, {"source": 5, "target": 30, "value": 763.0, "share": 0.11}, {"source": 5, "target": 31, "value": 164.0, "share": 0.02}, {"source": 5, "target": 32, "value": 100.0, "share": 0.02}, {"source": 5, "target": 33, "value": 456.0, "share": 0.07}, {"source": 5, "target": 35, "value": 110.0, "share": 0.02}, {"source": 5, "target": 34, "value": 60.0, "share": 0.01}, {"source": 5, "target": 39, "value": 0.0, "share": null}, {"source": 5, "target": 40, "value": 0.0, "share": null}, {"source": 5, "target": 37, "value": 0.0, "share": null}, {"source": 5, "target": 38, "value": 0.0, "share": null}, {"source": 6, "target": 41, "value": 0.0, "share": null}, {"source": 6, "target": 19, "value": 182.0, "share": 0.03}, {"source": 6, "target": 20, "value": 1088.0, "share": 0.16}, {"source": 6, "target": 21, "value": 364.0, "share": 0.05}, {"source": 6, "target": 22, "value": 367.0, "share": 0.05}, {"source": 6, "target": 23, "value": 122.0, "share": 0.02}, {"source": 6, "target": 24, "value": 150.0, "share": 0.02}, {"source": 6, "target": 25, "value": 139.0, "share": 0.02}, {"source": 6, "target": 26, "value": 888.0, "share": 0.13}, {"source": 6, "target": 27, "value": 56.0, "share": 0.01}, {"source": 6, "target": 28, "value": 171.0, "share": 0.02}, {"source": 6, "target": 30, "value": 118.0, "share": 0.02}, {"source": 6, "target": 29, "value": 240.0, "share": 0.03}, {"source": 6, "target": 31, "value": 273.0, "share": 0.04}, {"source": 6, "target": 32, "value": 1089.0, "share": 0.16}, {"source": 6, "target": 33, "value": 239.0, "share": 0.03}, {"source": 6, "target": 35, "value": 534.0, "share": 0.08}, {"source": 6, "target": 39, "value": 0.0, "share": null}, {"source": 6, "target": 40, "value": 0.0, "share": null}, {"source": 6, "target": 37, "value": 0.0, "share": null}, {"source": 6, "target": 36, "value": 0.0, "share": null}, {"source": 6, "target": 38, "value": 0.0, "share": null}, {"source": 7, "target": 41, "value": 0.0, "share": null}, {"source": 7, "target": 19, "value": 460.0, "share": 0.06}, {"source": 7, "target": 20, "value": 855.0, "share": 0.1}, {"source": 7, "target": 21, "value": 323.0, "share": 0.04}, {"source": 7, "target": 22, "value": 360.0, "share": 0.04}, {"source": 7, "target": 23, "value": 459.0, "share": 0.06}, {"source": 7, "target": 24, "value": 203.0, "share": 0.02}, {"source": 7, "target": 25, "value": 144.0, "share": 0.02}, {"source": 7, "target": 26, "value": 465.0, "share": 0.06}, {"source": 7, "target": 27, "value": 266.0, "share": 0.03}, {"source": 7, "target": 28, "value": 465.0, "share": 0.06}, {"source": 7, "target": 30, "value": 297.0, "share": 0.04}, {"source": 7, "target": 29, "value": 211.0, "share": 0.03}, {"source": 7, "target": 31, "value": 630.0, "share": 0.08}, {"source": 7, "target": 32, "value": 677.0, "share": 0.08}, {"source": 7, "target": 33, "value": 547.0, "share": 0.07}, {"source": 7, "target": 39, "value": 0.0, "share": null}, {"source": 7, "target": 40, "value": 0.0, "share": null}, {"source": 7, "target": 37, "value": 0.0, "share": null}, {"source": 7, "target": 34, "value": 0.0, "share": null}, {"source": 7, "target": 36, "value": 0.0, "share": null}, {"source": 7, "target": 38, "value": 0.0, "share": null}, {"source": 8, "target": 41, "value": 0.0, "share": null}, {"source": 8, "target": 19, "value": 623.0, "share": 0.06}, {"source": 8, "target": 20, "value": 533.0, "share": 0.05}, {"source": 8, "target": 21, "value": 446.0, "share": 0.04}, {"source": 8, "target": 22, "value": 652.0, "share": 0.06}, {"source": 8, "target": 23, "value": 735.0, "share": 0.07}, {"source": 8, "target": 24, "value": 928.0, "share": 0.09}, {"source": 8, "target": 25, "value": 241.0, "share": 0.02}, {"source": 8, "target": 26, "value": 781.0, "share": 0.07}, {"source": 8, "target": 27, "value": 298.0, "share": 0.03}, {"source": 8, "target": 28, "value": 691.0, "share": 0.06}, {"source": 8, "target": 30, "value": 2731.0, "share": 0.25}, {"source": 8, "target": 29, "value": 123.0, "share": 0.01}, {"source": 8, "target": 31, "value": 106.0, "share": 0.01}, {"source": 8, "target": 32, "value": 116.0, "share": 0.01}, {"source": 8, "target": 39, "value": 0.0, "share": null}, {"source": 8, "target": 40, "value": 0.0, "share": null}, {"source": 8, "target": 37, "value": 0.0, "share": null}, {"source": 8, "target": 35, "value": 0.0, "share": null}, {"source": 8, "target": 34, "value": 0.0, "share": null}, {"source": 8, "target": 36, "value": 0.0, "share": null}, {"source": 8, "target": 38, "value": 0.0, "share": null}, {"source": 9, "target": 41, "value": 0.0, "share": null}, {"source": 9, "target": 19, "value": 363.0, "share": 0.02}, {"source": 9, "target": 20, "value": 2306.0, "share": 0.15}, {"source": 9, "target": 21, "value": 365.0, "share": 0.02}, {"source": 9, "target": 22, "value": 1010.0, "share": 0.07}, {"source": 9, "target": 23, "value": 355.0, "share": 0.02}, {"source": 9, "target": 24, "value": 156.0, "share": 0.01}, {"source": 9, "target": 25, "value": 228.0, "share": 0.02}, {"source": 9, "target": 26, "value": 4225.0, "share": 0.28}, {"source": 9, "target": 30, "value": 115.0, "share": 0.01}, {"source": 9, "target": 27, "value": 303.0, "share": 0.02}, {"source": 9, "target": 28, "value": 213.0, "share": 0.01}, {"source": 9, "target": 29, "value": 1272.0, "share": 0.08}, {"source": 9, "target": 31, "value": 1610.0, "share": 0.11}, {"source": 9, "target": 39, "value": 0.0, "share": null}, {"source": 9, "target": 40, "value": 0.0, "share": null}, {"source": 9, "target": 37, "value": 0.0, "share": null}, {"source": 9, "target": 33, "value": 0.0, "share": null}, {"source": 9, "target": 35, "value": 0.0, "share": null}, {"source": 9, "target": 34, "value": 0.0, "share": null}, {"source": 9, "target": 36, "value": 0.0, "share": null}, {"source": 9, "target": 38, "value": 0.0, "share": null}, {"source": 10, "target": 41, "value": 0.0, "share": null}, {"source": 10, "target": 19, "value": 1381.0, "share": 0.08}, {"source": 10, "target": 20, "value": 2170.0, "share": 0.12}, {"source": 10, "target": 21, "value": 916.0, "share": 0.05}, {"source": 10, "target": 22, "value": 1522.0, "share": 0.09}, {"source": 10, "target": 23, "value": 642.0, "share": 0.04}, {"source": 10, "target": 24, "value": 714.0, "share": 0.04}, {"source": 10, "target": 25, "value": 738.0, "share": 0.04}, {"source": 10, "target": 26, "value": 1725.0, "share": 0.1}, {"source": 10, "target": 30, "value": 472.0, "share": 0.03}, {"source": 10, "target": 27, "value": 514.0, "share": 0.03}, {"source": 10, "target": 28, "value": 319.0, "share": 0.02}, {"source": 10, "target": 29, "value": 1712.0, "share": 0.1}, {"source": 10, "target": 32, "value": 0.0, "share": null}, {"source": 10, "target": 39, "value": 0.0, "share": null}, {"source": 10, "target": 40, "value": 0.0, "share": null}, {"source": 10, "target": 37, "value": 0.0, "share": null}, {"source": 10, "target": 33, "value": 0.0, "share": null}, {"source": 10, "target": 35, "value": 0.0, "share": null}, {"source": 10, "target": 34, "value": 0.0, "share": null}, {"source": 10, "target": 36, "value": 0.0, "share": null}, {"source": 10, "target": 38, "value": 0.0, "share": null}, {"source": 11, "target": 41, "value": 0.0, "share": null}, {"source": 11, "target": 19, "value": 2992.0, "share": 0.12}, {"source": 11, "target": 20, "value": 1895.0, "share": 0.08}, {"source": 11, "target": 22, "value": 1036.0, "share": 0.04}, {"source": 11, "target": 21, "value": 2065.0, "share": 0.09}, {"source": 11, "target": 23, "value": 1303.0, "share": 0.05}, {"source": 11, "target": 24, "value": 3331.0, "share": 0.14}, {"source": 11, "target": 25, "value": 1575.0, "share": 0.07}, {"source": 11, "target": 26, "value": 431.0, "share": 0.02}, {"source": 11, "target": 30, "value": 2864.0, "share": 0.12}, {"source": 11, "target": 29, "value": 566.0, "share": 0.02}, {"source": 11, "target": 27, "value": 898.0, "share": 0.04}, {"source": 11, "target": 31, "value": 0.0, "share": null}, {"source": 11, "target": 32, "value": 0.0, "share": null}, {"source": 11, "target": 39, "value": 0.0, "share": null}, {"source": 11, "target": 40, "value": 0.0, "share": null}, {"source": 11, "target": 37, "value": 0.0, "share": null}, {"source": 11, "target": 33, "value": 0.0, "share": null}, {"source": 11, "target": 35, "value": 0.0, "share": null}, {"source": 11, "target": 34, "value": 0.0, "share": null}, {"source": 11, "target": 36, "value": 0.0, "share": null}, {"source": 11, "target": 38, "value": 0.0, "share": null}, {"source": 12, "target": 41, "value": 0.0, "share": null}, {"source": 12, "target": 19, "value": 1054.0, "share": 0.04}, {"source": 12, "target": 20, "value": 851.0, "share": 0.03}, {"source": 12, "target": 21, "value": 521.0, "share": 0.02}, {"source": 12, "target": 22, "value": 1121.0, "share": 0.04}, {"source": 12, "target": 23, "value": 15750.0, "share": 0.62}, {"source": 12, "target": 24, "value": 357.0, "share": 0.01}, {"source": 12, "target": 25, "value": 307.0, "share": 0.01}, {"source": 12, "target": 26, "value": 472.0, "share": 0.02}, {"source": 12, "target": 30, "value": 574.0, "share": 0.02}, {"source": 12, "target": 29, "value": 380.0, "share": 0.01}, {"source": 12, "target": 31, "value": 0.0, "share": null}, {"source": 12, "target": 32, "value": 0.0, "share": null}, {"source": 12, "target": 39, "value": 0.0, "share": null}, {"source": 12, "target": 40, "value": 0.0, "share": null}, {"source": 12, "target": 37, "value": 0.0, "share": null}, {"source": 12, "target": 33, "value": 0.0, "share": null}, {"source": 12, "target": 35, "value": 0.0, "share": null}, {"source": 12, "target": 34, "value": 0.0, "share": null}, {"source": 12, "target": 28, "value": 0.0, "share": null}, {"source": 12, "target": 36, "value": 0.0, "share": null}, {"source": 12, "target": 38, "value": 0.0, "share": null}, {"source": 13, "target": 41, "value": 0.0, "share": null}, {"source": 13, "target": 19, "value": 2660.0, "share": 0.1}, {"source": 13, "target": 23, "value": 731.0, "share": 0.03}, {"source": 13, "target": 20, "value": 6690.0, "share": 0.26}, {"source": 13, "target": 21, "value": 1760.0, "share": 0.07}, {"source": 13, "target": 22, "value": 2969.0, "share": 0.11}, {"source": 13, "target": 24, "value": 682.0, "share": 0.03}, {"source": 13, "target": 25, "value": 1565.0, "share": 0.06}, {"source": 13, "target": 26, "value": 2003.0, "share": 0.08}, {"source": 13, "target": 30, "value": 454.0, "share": 0.02}, {"source": 13, "target": 31, "value": 0.0, "share": null}, {"source": 13, "target": 32, "value": 0.0, "share": null}, {"source": 13, "target": 39, "value": 0.0, "share": null}, {"source": 13, "target": 40, "value": 0.0, "share": null}, {"source": 13, "target": 37, "value": 0.0, "share": null}, {"source": 13, "target": 33, "value": 0.0, "share": null}, {"source": 13, "target": 35, "value": 0.0, "share": null}, {"source": 13, "target": 34, "value": 0.0, "share": null}, {"source": 13, "target": 28, "value": 0.0, "share": null}, {"source": 13, "target": 36, "value": 0.0, "share": null}, {"source": 13, "target": 27, "value": 0.0, "share": null}, {"source": 13, "target": 38, "value": 0.0, "share": null}, {"source": 14, "target": 41, "value": 0.0, "share": null}, {"source": 14, "target": 19, "value": 2559.0, "share": 0.09}, {"source": 14, "target": 20, "value": 1373.0, "share": 0.05}, {"source": 14, "target": 23, "value": 4616.0, "share": 0.16}, {"source": 14, "target": 22, "value": 2509.0, "share": 0.08}, {"source": 14, "target": 21, "value": 1821.0, "share": 0.06}, {"source": 14, "target": 24, "value": 7675.0, "share": 0.26}, {"source": 14, "target": 25, "value": 1434.0, "share": 0.05}, {"source": 14, "target": 26, "value": 883.0, "share": 0.03}, {"source": 14, "target": 31, "value": 0.0, "share": null}, {"source": 14, "target": 32, "value": 0.0, "share": null}, {"source": 14, "target": 29, "value": 0.0, "share": null}, {"source": 14, "target": 39, "value": 0.0, "share": null}, {"source": 14, "target": 40, "value": 0.0, "share": null}, {"source": 14, "target": 37, "value": 0.0, "share": null}, {"source": 14, "target": 33, "value": 0.0, "share": null}, {"source": 14, "target": 35, "value": 0.0, "share": null}, {"source": 14, "target": 34, "value": 0.0, "share": null}, {"source": 14, "target": 28, "value": 0.0, "share": null}, {"source": 14, "target": 36, "value": 0.0, "share": null}, {"source": 14, "target": 27, "value": 0.0, "share": null}, {"source": 14, "target": 38, "value": 0.0, "share": null}, {"source": 15, "target": 41, "value": 0.0, "share": null}, {"source": 15, "target": 19, "value": 1783.0, "share": 0.05}, {"source": 15, "target": 23, "value": 4571.0, "share": 0.12}, {"source": 15, "target": 20, "value": 8132.0, "share": 0.21}, {"source": 15, "target": 22, "value": 4764.0, "share": 0.12}, {"source": 15, "target": 21, "value": 837.0, "share": 0.02}, {"source": 15, "target": 24, "value": 588.0, "share": 0.02}, {"source": 15, "target": 25, "value": 770.0, "share": 0.02}, {"source": 15, "target": 31, "value": 0.0, "share": null}, {"source": 15, "target": 32, "value": 0.0, "share": null}, {"source": 15, "target": 29, "value": 0.0, "share": null}, {"source": 15, "target": 39, "value": 0.0, "share": null}, {"source": 15, "target": 40, "value": 0.0, "share": null}, {"source": 15, "target": 37, "value": 0.0, "share": null}, {"source": 15, "target": 33, "value": 0.0, "share": null}, {"source": 15, "target": 35, "value": 0.0, "share": null}, {"source": 15, "target": 34, "value": 0.0, "share": null}, {"source": 15, "target": 28, "value": 0.0, "share": null}, {"source": 15, "target": 36, "value": 0.0, "share": null}, {"source": 15, "target": 30, "value": 0.0, "share": null}, {"source": 15, "target": 27, "value": 0.0, "share": null}, {"source": 15, "target": 38, "value": 0.0, "share": null}, {"source": 16, "target": 41, "value": 0.0, "share": null}, {"source": 16, "target": 19, "value": 12271.0, "share": 0.28}, {"source": 16, "target": 20, "value": 3055.0, "share": 0.07}, {"source": 16, "target": 23, "value": 1047.0, "share": 0.02}, {"source": 16, "target": 22, "value": 1804.0, "share": 0.04}, {"source": 16, "target": 21, "value": 6325.0, "share": 0.15}, {"source": 16, "target": 24, "value": 4518.0, "share": 0.1}, {"source": 16, "target": 31, "value": 0.0, "share": null}, {"source": 16, "target": 26, "value": 0.0, "share": null}, {"source": 16, "target": 32, "value": 0.0, "share": null}, {"source": 16, "target": 29, "value": 0.0, "share": null}, {"source": 16, "target": 39, "value": 0.0, "share": null}, {"source": 16, "target": 40, "value": 0.0, "share": null}, {"source": 16, "target": 37, "value": 0.0, "share": null}, {"source": 16, "target": 33, "value": 0.0, "share": null}, {"source": 16, "target": 35, "value": 0.0, "share": null}, {"source": 16, "target": 34, "value": 0.0, "share": null}, {"source": 16, "target": 28, "value": 0.0, "share": null}, {"source": 16, "target": 36, "value": 0.0, "share": null}, {"source": 16, "target": 30, "value": 0.0, "share": null}, {"source": 16, "target": 27, "value": 0.0, "share": null}, {"source": 16, "target": 38, "value": 0.0, "share": null}, {"source": 17, "target": 41, "value": 0.0, "share": null}, {"source": 17, "target": 20, "value": 785.0, "share": 0.15}, {"source": 17, "target": 23, "value": 193.0, "share": 0.04}, {"source": 17, "target": 22, "value": 233.0, "share": 0.04}, {"source": 17, "target": 21, "value": 3377.0, "share": 0.63}, {"source": 17, "target": 24, "value": 756.0, "share": 0.14}, {"source": 17, "target": 31, "value": 0.0, "share": null}, {"source": 17, "target": 25, "value": 0.0, "share": null}, {"source": 17, "target": 26, "value": 0.0, "share": null}, {"source": 17, "target": 32, "value": 0.0, "share": null}, {"source": 17, "target": 29, "value": 0.0, "share": null}, {"source": 17, "target": 39, "value": 0.0, "share": null}, {"source": 17, "target": 40, "value": 0.0, "share": null}, {"source": 17, "target": 37, "value": 0.0, "share": null}, {"source": 17, "target": 33, "value": 0.0, "share": null}, {"source": 17, "target": 35, "value": 0.0, "share": null}, {"source": 17, "target": 34, "value": 0.0, "share": null}, {"source": 17, "target": 28, "value": 0.0, "share": null}, {"source": 17, "target": 36, "value": 0.0, "share": null}, {"source": 17, "target": 30, "value": 0.0, "share": null}, {"source": 17, "target": 27, "value": 0.0, "share": null}, {"source": 17, "target": 38, "value": 0.0, "share": null}, {"source": 18, "target": 19, "value": 0.0, "share": null}, {"source": 18, "target": 41, "value": 0.0, "share": null}, {"source": 18, "target": 20, "value": 5329.0, "share": 0.08}, {"source": 18, "target": 23, "value": 7562.0, "share": 0.11}, {"source": 18, "target": 21, "value": 16602.0, "share": 0.24}, {"source": 18, "target": 22, "value": 10210.0, "share": 0.15}, {"source": 18, "target": 31, "value": 0.0, "share": null}, {"source": 18, "target": 25, "value": 0.0, "share": null}, {"source": 18, "target": 26, "value": 0.0, "share": null}, {"source": 18, "target": 32, "value": 0.0, "share": null}, {"source": 18, "target": 29, "value": 0.0, "share": null}, {"source": 18, "target": 39, "value": 0.0, "share": null}, {"source": 18, "target": 40, "value": 0.0, "share": null}, {"source": 18, "target": 37, "value": 0.0, "share": null}, {"source": 18, "target": 33, "value": 0.0, "share": null}, {"source": 18, "target": 35, "value": 0.0, "share": null}, {"source": 18, "target": 34, "value": 0.0, "share": null}, {"source": 18, "target": 28, "value": 0.0, "share": null}, {"source": 18, "target": 36, "value": 0.0, "share": null}, {"source": 18, "target": 30, "value": 0.0, "share": null}, {"source": 18, "target": 27, "value": 0.0, "share": null}, {"source": 18, "target": 38, "value": 0.0, "share": null}]};
+
+const labels = ['aontú_patrick_murphy', 'ff_billy_kelleher', 'ff_cynthia_ni_mhurchu',
+       'fg_john_mullins', 'fg_sean_kelly', 'green_grace_o_sullivan',
+       'i4c_mick_wallace', 'if_derek_blighe', 'ifp_michael_leahy',
+       'ii_eddie_punch', 'ind_christopher_doyle', 'ind_ciaran_o_riordan',
+       'ind_graham_de_barra', 'ind_lorna_bogue', 'ind_mary_fitzgibbon',
+       'ind_michael_mcnamara', 'ind_una_mcgurk', 'lab_niamh_hourigan',
+       'pbp-sol_cian_prendiville', 'sd_susan_doyle', 'sf_kathleen_funchion',
+       'sf_paul_gavan', 'tip_ross_lahive'];
+
+const colors = ['#FFA233', '#4CBB17', '#4CBB17', '#0000FF', '#0000FF', '#7CFC00', '#8f8b8f', '#8f8b8f', '#8f8b8f', '#66eded', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#1d1e3b', '#C41E3A', '#FF0000', '#d52cde', '#93C572', '#93C572', '#8f8b8f'];
+
+const canMatcher = {'fg_sean_kelly': {'Candidate': 'KELLY, Seán*', 'Party': 'FG'},
+ 'ff_billy_kelleher': {'Candidate': 'KELLEHER, Billy*', 'Party': 'FF'},
+ 'ind_michael_mcnamara': {'Candidate': 'McNAMARA, Michael', 'Party': 'Ind'},
+ 'ff_cynthia_ni_mhurchu': {'Candidate': 'NÍ MHURCHÚ, Cynthia', 'Party': 'FF'},
+ 'sf_kathleen_funchion': {'Candidate': 'FUNCHION, Kathleen', 'Party': 'SF'},
+ 'i4c_mick_wallace': {'Candidate': 'WALLACE, Mick*', 'Party': 'I4C'},
+ 'green_grace_o_sullivan': {'Candidate': "O'SULLIVAN, Grace*",
+  'Party': 'Green'},
+ 'fg_john_mullins': {'Candidate': 'MULLINS, John', 'Party': 'FG'},
+ 'if_derek_blighe': {'Candidate': 'BLIGHE, Derek', 'Party': 'IF'},
+ 'sd_susan_doyle': {'Candidate': 'DOYLE, Susan', 'Party': 'SD'},
+ 'ii_eddie_punch': {'Candidate': 'PUNCH, Eddie', 'Party': 'II'},
+ 'sf_paul_gavan': {'Candidate': 'GAVAN, Paul', 'Party': 'SF'},
+ 'lab_niamh_hourigan': {'Candidate': 'HOURIGAN, Niamh', 'Party': 'Lab'},
+ 'aontú_patrick_murphy': {'Candidate': 'MURPHY, Patrick', 'Party': 'Aontú'},
+ 'ifp_michael_leahy': {'Candidate': 'LEAHY, Michael', 'Party': 'IFP'},
+ 'ind_lorna_bogue': {'Candidate': 'BOGUE, Lorna', 'Party': 'Ind'},
+ 'ind_mary_fitzgibbon': {'Candidate': 'FITZGIBBON, Mary', 'Party': 'Ind'},
+ 'ind_una_mcgurk': {'Candidate': 'McGURK, Una', 'Party': 'Ind'},
+ 'pbp-sol_cian_prendiville': {'Candidate': 'PRENDIVILLE, Cian',
+  'Party': 'PBP-Sol'},
+ 'ind_graham_de_barra': {'Candidate': 'DE BARRA, Graham', 'Party': 'Ind'},
+ 'tip_ross_lahive': {'Candidate': 'LAHIVE, Ross', 'Party': 'TIP'},
+ 'ind_christopher_doyle': {'Candidate': 'DOYLE, Christopher', 'Party': 'Ind'},
+ 'ind_ciaran_o_riordan': {'Candidate': "O'RIORDAN, Ciaran", 'Party': 'Ind'}};
+
+
+
+  let scaleColor = d3.scaleOrdinal().domain(labels).range(colors);
+  const voteFormatter = d3.format(",");
+
+  const svg = d3
+    .select("#canvas")
+    .append("svg")
+    .attr("width", width)
+    .attr("background", "aliceblue")
+    .attr("height", height);
+
+  const plot = svg
+    .append("g")
+    .attr("transform", `translate(${[margin.top, margin.left]})`);
+
+  // The sankey object
+  const sankey = d3
+    .sankey()
+    .size([width, height])
+    .nodeId((d) => d.id)
+    .nodeWidth(40)
+    .nodePadding(5)
+    .nodeAlign(d3.sankeyCenter);
+
+  // calling the sankey object
+  let graph = sankey(data);
+
+  // plotting the links
+  let links = plot
+    .append("g")
+    .classed("links", true)
+    .selectAll("path")
+    .data(graph.links)
+    .enter()
+    .append("path")
+    .classed("link", true)
+    .attr("d", d3.sankeyLinkHorizontal())
+    .attr("fill", "none")
+    .attr("stroke", (d) => {
+      return scaleColor(d.source.label);
+    })
+    .attr("stroke-width", (d) => d.width)
+    .attr("stoke-opacity", 0.5);
+
+  // plotting the nodes
+  let nodes = plot
+    .append("g")
+    .classed("nodes", true)
+    .selectAll("rect")
+    .data(graph.nodes)
+    .enter()
+    .append("rect")
+    .classed("node", true)
+    .attr("x", (d) => d.x0)
+    .attr("y", (d) => d.y0)
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("fill", (d) => {
+      return scaleColor(d.label);
+    });
+
+  let label_texts = plot
+    .selectAll("text")
+    .data(data.nodes)
+    .enter()
+    .append("text")
+    .attr("x", (d) => (d.x1 + d.x0 < width / 2 ? (d.x1 + d.x0) / 2 : d.x0))
+    .attr("y", (d) => (d.y1 + d.y0) / 2)
+    .style("text-anchor", (d) => (d.x1 + d.x0 < width / 2 ? "start" : "end"))
+    .text(
+          (d) => {if (d.y1-d.y0 > LABEL_HEIGHT_LIMIT) return `${canMatcher[d.label].Candidate}, (${canMatcher[d.label].Party})`;}
+        );
+
+  // tooltip
+  var tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+  // plot.selectAll('path.link')
+  links
+    .on("mouseover", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0.75);
+
+      tooltip
+        .html(htmlFormatter(d))
+        .style("left", e.pageX + "px")
+        .style("top", e.pageY + "px");
+    })
+    .on("mouseout", (e, d) => {
+      tooltip.transition().duration(250).style("opacity", 0);
+    });
+
+  function htmlFormatter(d) {
+    return `${canMatcher[d.source.label].Candidate} transferred ${voteFormatter(d.value)}
+            votes to ${canMatcher[d.target.label].Candidate}`;
+  }
+
+        }
+    </script>
+</head>
+
+<body onload="draw()">
+    <h2></h2>
+    <h3></h3>
+    <div id='canvas'></div>
+</body>
+
+</html>

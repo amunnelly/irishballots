@@ -1,0 +1,279 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            h2 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 24px;
+            }
+
+            h3 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 18px;
+            }
+
+            g text {
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bolder;
+                font-size: 14px;
+                /* fill: #fff; */
+                /* stroke: #000;
+    stroke-width: 1px; */
+            }
+
+            g.axes g.tick text {
+                font-weight: normal;
+            }
+
+            .tooltip {
+                position: absolute;
+                text-align: center;
+                width: 450px;
+                height: 30px;
+                padding: 4px;
+                font: 16px sans-serif;
+                background: #fff;
+                border: 1px solid black;
+                border-radius: 8px;
+                pointer-events: none;
+            }
+
+            path.link {
+                opacity: 0.5;
+            }
+
+            table {
+                font-size: smaller;
+            }
+
+            path.link:hover {
+                opacity: 0.75;
+            }
+
+            #quotaLine {
+                stroke: grey;
+                stroke-width: 1px;
+                stroke-dasharray: 5;
+                fill: none;
+            }
+        </style>
+        <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+        <script>
+            const draw = () => {
+                const QUOTA = 113325;
+                const xLIMIT = 1.3e5;
+                const voteFormatter = d3.format(",");
+
+                const countColors = [
+                    "#1f77b4",
+                    "#aec7e8",
+                    "#ff7f0e",
+                    "#ffbb78",
+                    "#2ca02c",
+                    "#98df8a",
+                    "#d62728",
+                    "#ff9896",
+                    "#9467bd",
+                    "#c5b0d5",
+                    "#8c564b",
+                    "#c49c94",
+                    "#e377c2",
+                    "#f7b6d2",
+                    "#7f7f7f",
+                    "#c7c7c7",
+                    "#bcbd22",
+                    "#dbdb8d",
+                    "#17becf",
+                    "#9edae5",
+                    "#1f77b4",
+                ];
+
+                // SET THE DIMENSIONS
+                const width = 1100;
+                const height = 600;
+
+                const margin = { top: 50, bottom: 10, left: 200, right: 175 };
+                const plot_height = height - margin.top - margin.bottom;
+                const plot_width = width - margin.left - margin.right;
+
+                // data
+
+                const data = [{"candidate_id":"fg_sean_kelly","Candidate":"KELLY, Seán*, FG","1st Count":122777,"2nd Count":0,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ff_billy_kelleher","Candidate":"KELLEHER, Billy*, FF","1st Count":91074,"2nd Count":47,"3rd Count":206,"4th Count":98,"5th Count":287,"6th Count":102,"7th Count":182,"8th Count":460,"9th Count":623,"10th Count":363,"11th Count":1381,"12th Count":2992,"13th Count":1054,"14th Count":2660,"15th Count":2559,"16th Count":1783,"17th Count":12271,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_michael_mcnamara","Candidate":"McNAMARA, Michael, Ind","1st Count":56339,"2nd Count":292,"3rd Count":144,"4th Count":199,"5th Count":136,"6th Count":176,"7th Count":1088,"8th Count":855,"9th Count":533,"10th Count":2306,"11th Count":2170,"12th Count":1895,"13th Count":851,"14th Count":6690,"15th Count":1373,"16th Count":8132,"17th Count":3055,"18th Count":785,"19th Count":5329,"20th Count":0},{"candidate_id":"ff_cynthia_ni_mhurchu","Candidate":"NÍ MHURCHÚ, Cynthia, FF","1st Count":55209,"2nd Count":69,"3rd Count":211,"4th Count":121,"5th Count":161,"6th Count":239,"7th Count":364,"8th Count":323,"9th Count":446,"10th Count":365,"11th Count":916,"12th Count":2065,"13th Count":521,"14th Count":1760,"15th Count":1821,"16th Count":837,"17th Count":6325,"18th Count":3377,"19th Count":16602,"20th Count":0},{"candidate_id":"i4c_mick_wallace","Candidate":"WALLACE, Mick*, I4C","1st Count":52803,"2nd Count":235,"3rd Count":273,"4th Count":406,"5th Count":279,"6th Count":1214,"7th Count":367,"8th Count":360,"9th Count":652,"10th Count":1010,"11th Count":1522,"12th Count":1036,"13th Count":1121,"14th Count":2969,"15th Count":2509,"16th Count":4764,"17th Count":1804,"18th Count":233,"19th Count":10210,"20th Count":0},{"candidate_id":"sf_kathleen_funchion","Candidate":"FUNCHION, Kathleen, SF","1st Count":50580,"2nd Count":32,"3rd Count":200,"4th Count":221,"5th Count":325,"6th Count":483,"7th Count":122,"8th Count":459,"9th Count":735,"10th Count":355,"11th Count":642,"12th Count":1303,"13th Count":15750,"14th Count":731,"15th Count":4616,"16th Count":4571,"17th Count":1047,"18th Count":193,"19th Count":7562,"20th Count":0},{"candidate_id":"green_grace_o_sullivan","Candidate":"O'SULLIVAN, Grace*, Green","1st Count":47661,"2nd Count":71,"3rd Count":146,"4th Count":65,"5th Count":272,"6th Count":563,"7th Count":150,"8th Count":203,"9th Count":928,"10th Count":156,"11th Count":714,"12th Count":3331,"13th Count":357,"14th Count":682,"15th Count":7675,"16th Count":588,"17th Count":4518,"18th Count":756,"19th Count":0,"20th Count":0},{"candidate_id":"fg_john_mullins","Candidate":"MULLINS, John, FG","1st Count":33281,"2nd Count":37,"3rd Count":204,"4th Count":113,"5th Count":105,"6th Count":87,"7th Count":139,"8th Count":144,"9th Count":241,"10th Count":228,"11th Count":738,"12th Count":1575,"13th Count":307,"14th Count":1565,"15th Count":1434,"16th Count":770,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"if_derek_blighe","Candidate":"BLIGHE, Derek, IF","1st Count":25071,"2nd Count":135,"3rd Count":138,"4th Count":791,"5th Count":372,"6th Count":188,"7th Count":888,"8th Count":465,"9th Count":781,"10th Count":4225,"11th Count":1725,"12th Count":431,"13th Count":472,"14th Count":2003,"15th Count":883,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"sf_paul_gavan","Candidate":"GAVAN, Paul, SF","1st Count":22392,"2nd Count":18,"3rd Count":87,"4th Count":172,"5th Count":106,"6th Count":291,"7th Count":56,"8th Count":266,"9th Count":298,"10th Count":303,"11th Count":514,"12th Count":898,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"lab_niamh_hourigan","Candidate":"HOURIGAN, Niamh, Lab","1st Count":21272,"2nd Count":20,"3rd Count":143,"4th Count":113,"5th Count":184,"6th Count":346,"7th Count":171,"8th Count":465,"9th Count":691,"10th Count":213,"11th Count":319,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ii_eddie_punch","Candidate":"PUNCH, Eddie, II","1st Count":20751,"2nd Count":95,"3rd Count":62,"4th Count":132,"5th Count":46,"6th Count":408,"7th Count":240,"8th Count":211,"9th Count":123,"10th Count":1272,"11th Count":1712,"12th Count":566,"13th Count":380,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"sd_susan_doyle","Candidate":"DOYLE, Susan, SD","1st Count":20229,"2nd Count":28,"3rd Count":194,"4th Count":64,"5th Count":599,"6th Count":763,"7th Count":118,"8th Count":297,"9th Count":2731,"10th Count":115,"11th Count":472,"12th Count":2864,"13th Count":574,"14th Count":454,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"aontú_patrick_murphy","Candidate":"MURPHY, Patrick, Aontú","1st Count":14124,"2nd Count":185,"3rd Count":33,"4th Count":131,"5th Count":90,"6th Count":164,"7th Count":273,"8th Count":630,"9th Count":106,"10th Count":1610,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ifp_michael_leahy","Candidate":"LEAHY, Michael, IFP","1st Count":12259,"2nd Count":156,"3rd Count":51,"4th Count":601,"5th Count":73,"6th Count":100,"7th Count":1089,"8th Count":677,"9th Count":116,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_lorna_bogue","Candidate":"BOGUE, Lorna, Ind","1st Count":8788,"2nd Count":72,"3rd Count":111,"4th Count":59,"5th Count":498,"6th Count":456,"7th Count":239,"8th Count":547,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_una_mcgurk","Candidate":"McGURK, Una, Ind","1st Count":6387,"2nd Count":115,"3rd Count":44,"4th Count":101,"5th Count":99,"6th Count":60,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_mary_fitzgibbon","Candidate":"FITZGIBBON, Mary, Ind","1st Count":6281,"2nd Count":199,"3rd Count":561,"4th Count":133,"5th Count":412,"6th Count":110,"7th Count":534,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"pbp-sol_cian_prendiville","Candidate":"PRENDIVILLE, Cian, PBP-Sol","1st Count":6243,"2nd Count":66,"3rd Count":42,"4th Count":134,"5th Count":134,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_graham_de_barra","Candidate":"DE BARRA, Graham, Ind","1st Count":4575,"2nd Count":77,"3rd Count":126,"4th Count":96,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"tip_ross_lahive","Candidate":"LAHIVE, Ross, TIP","1st Count":4461,"2nd Count":82,"3rd Count":62,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_christopher_doyle","Candidate":"DOYLE, Christopher, Ind","1st Count":3530,"2nd Count":38,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0},{"candidate_id":"ind_ciaran_o_riordan","Candidate":"O'RIORDAN, Ciaran, Ind","1st Count":2477,"2nd Count":0,"3rd Count":0,"4th Count":0,"5th Count":0,"6th Count":0,"7th Count":0,"8th Count":0,"9th Count":0,"10th Count":0,"11th Count":0,"12th Count":0,"13th Count":0,"14th Count":0,"15th Count":0,"16th Count":0,"17th Count":0,"18th Count":0,"19th Count":0,"20th Count":0}];
+
+                const groups = ['KELLY, Seán*, FG', 'KELLEHER, Billy*, FF', 'McNAMARA, Michael, Ind', 'NÍ MHURCHÚ, Cynthia, FF', 'WALLACE, Mick*, I4C', 'FUNCHION, Kathleen, SF', "O'SULLIVAN, Grace*, Green", 'MULLINS, John, FG', 'BLIGHE, Derek, IF', 'GAVAN, Paul, SF', 'HOURIGAN, Niamh, Lab', 'PUNCH, Eddie, II', 'DOYLE, Susan, SD', 'MURPHY, Patrick, Aontú', 'LEAHY, Michael, IFP', 'BOGUE, Lorna, Ind', 'McGURK, Una, Ind', 'FITZGIBBON, Mary, Ind', 'PRENDIVILLE, Cian, PBP-Sol', 'DE BARRA, Graham, Ind', 'LAHIVE, Ross, TIP', 'DOYLE, Christopher, Ind', "O'RIORDAN, Ciaran, Ind"];
+
+                const subgroups = ['1st Count', '2nd Count', '3rd Count',
+       '4th Count', '5th Count', '6th Count', '7th Count', '8th Count',
+       '9th Count', '10th Count', '11th Count', '12th Count', '13th Count',
+       '14th Count', '15th Count', '16th Count', '17th Count', '18th Count',
+       '19th Count', '20th Count'];
+
+                const legend_labels = [
+"1st Count: KELLY, Seán*, FG, elected",
+"3rd Count: O'RIORDAN, Ciaran, Ind, eliminated",
+"4th Count: DOYLE, Christopher, Ind, eliminated",
+"5th Count: LAHIVE, Ross, TIP, eliminated",
+"6th Count: DE BARRA, Graham, Ind, eliminated",
+"7th Count: PRENDIVILLE, Cian, PBP-Sol, eliminated",
+"8th Count: McGURK, Una, Ind, eliminated",
+"9th Count: FITZGIBBON, Mary, Ind, eliminated",
+"10th Count: BOGUE, Lorna, Ind, eliminated",
+"11th Count: LEAHY, Michael, IFP, eliminated",
+"12th Count: MURPHY, Patrick, Aontú, eliminated",
+"13th Count: HOURIGAN, Niamh, Lab, eliminated",
+"14th Count: GAVAN, Paul, SF, eliminated",
+"15th Count: PUNCH, Eddie, II, eliminated",
+"16th Count: DOYLE, Susan, SD, eliminated",
+"17th Count: BLIGHE, Derek, IF, eliminated",
+"18th Count: KELLEHER, Billy*, FF elected. MULLINS, John, FG eliminated. ",
+"20th Count: FUNCHION, SF, McNAMARA, Ind, NÍ MHURCHÚ, FF elected."];
+
+                const stack = d3.stack().keys(subgroups);
+                const stacked_data = stack(data);
+
+                // CREATE THE CANVAS AND PLOT OBJECTS
+                var canvas = d3
+                    .select("#canvas")
+                    .append("svg")
+                    .style("background", "white")
+                    .attr("height", height)
+                    .attr("width", width);
+
+                var plot = canvas
+                    .append("g")
+                    .attr(
+                        "transform",
+                        `translate(${margin.left},${margin.top})`,
+                    );
+
+                // scales
+                const scaleY = d3
+                    .scaleBand()
+                    .domain(groups)
+                    .range([0, plot_height])
+                    .padding(0.1);
+                const scaleX = d3
+                    .scaleLinear()
+                    .domain([0, xLIMIT]) //1.5e5
+                    .range([0, plot_width]);
+
+                const scaleColor = d3
+                    .scaleOrdinal()
+                    .domain(subgroups)
+                    .range(countColors);
+
+                var bars = plot
+                    .append("g")
+                    .selectAll("g")
+                    .data(stacked_data)
+                    .join("g")
+                    .attr("fill", (d) => scaleColor(d.key))
+                    .selectAll("rect")
+                    .data((d) => d)
+                    .join("rect")
+                    .attr("class", "bar")
+                    .attr("x", (d) => {
+                        return scaleX(d[0]);
+                    })
+                    .attr("y", (d) => {
+                        return scaleY(d.data.Candidate);
+                    })
+                    .attr("width", (d) => {
+                        return scaleX(d[1]) - scaleX(d[0]);
+                    })
+                    .attr("height", (d) => {
+                        return scaleY.bandwidth();
+                    });
+
+                // CREATE AND DRAW THE AXES
+                var xAx = d3.axisTop(scaleX);
+                var yAx = d3.axisLeft(scaleY);
+
+                plot.append("g")
+                    .attr("transform", `translate(0,0)`)
+                    .attr("class", "axes")
+                    .call(xAx);
+
+                plot.append("g")
+                    .attr("transform", `translate(0, 0)`)
+                    .attr("class", "axes")
+                    .call(yAx);
+
+                const linedata = [
+                    { x: QUOTA, y: plot_height },
+                    { x: QUOTA, y: 0 },
+                ];
+
+                const makeLine = d3
+                    .line()
+                    .x((d) => {
+                        return scaleX(d.x);
+                    })
+                    .y((d) => {
+                        return d.y;
+                    });
+
+                var targetLine = plot
+                    .append("path")
+                    .attr("d", makeLine(linedata))
+                    .attr("id", "quotaLine");
+
+                // legend
+
+                plot.selectAll("legend")
+                    .data(legend_labels)
+                    .enter()
+                    .append("text")
+                    .attr("class", "legend")
+                    .attr("x", width - 200)
+                    .attr("y", (d, i) => {
+                        return 150 + i * 20;
+                    })
+                    .style("fill", function (d, i) {
+                        return countColors[i];
+                    })
+                    .text(function (d) {
+                        return d;
+                    })
+                    .style("text-anchor", "end");
+
+                var tooltip = d3
+                    .select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                function tooltipText(name, value) {
+                    const label =
+                        name == "1st Count" ? "Votes" : "Transfers gained";
+                    return `<b>${name}</b><br>${label}: ${voteFormatter(value)}`;
+                }
+
+                bars.on("mouseover", function (e, d) {
+                    // 1. tooltip manifests
+                    tooltip.transition().duration(250).style("opacity", 1);
+
+                    // 2.
+                    const subgroupName = d3.select(this.parentNode).datum().key;
+                    const subgroupValue = d.data[subgroupName];
+
+                    tooltip
+                        .style("left", e.pageX + "px")
+                        .style("top", e.pageY + "px")
+                        .html((d) => tooltipText(subgroupName, subgroupValue));
+                }).on("mouseout", function (e, d) {
+                    tooltip.transition().duration(150).style("opacity", 0);
+                });
+            };
+        </script>
+    </head>
+
+    <body onload="draw()">
+        <h2></h2>
+        <h3></h3>
+        <div id="canvas"></div>
+    </body>
+</html>
