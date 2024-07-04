@@ -9,7 +9,7 @@ permalink: /counts/
   <ul>
     {% for post in site.posts %}
     {% if post.categories contains "counts" %}
-      <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+      <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>
