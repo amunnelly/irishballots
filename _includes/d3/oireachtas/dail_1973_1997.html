@@ -1,0 +1,1268 @@
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            h2 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 24px;
+            }
+
+            h3 {
+                font-family: "Gill Sans", "Gill Sans MT", Calibri,
+                    "Trebuchet MS", sans-serif;
+                font-size: 18px;
+            }
+
+            g text {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+            }
+
+            .axisLabel {
+                text-anchor: end;
+                font-size: 14px;
+            }
+
+            g.axes g.tick text {
+                font-weight: normal;
+                font-size: 12px;
+            }
+
+            .tooltip {
+                position: absolute;
+                text-align: center;
+                width: 200px;
+                height: 20px;
+                padding-top: 10px;
+                padding-left: 10px;
+                font: 1rem sans-serif;
+                background: white;
+                border: 1px;
+                border-radius: 8px;
+                pointer-events: none;
+            }
+
+            table {
+                font-size: small;
+            }
+
+            .legend {
+                font-size: 16px;
+                font-weight: bold;
+                stroke: black;
+                stroke-width: 0.1;
+            }
+
+            path.link:hover {
+                opacity: 0.75;
+            }
+        </style>
+        <!-- <script type='text/javascript' src="d3-sankey/d3-sankey.min.js"></script> -->
+        <script>
+            const draw = () => {
+                let results = [
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 69,
+                        date: "1973-02-28",
+                        share: 0.4791666666666667,
+                        dail: 20,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 54,
+                        date: "1973-02-28",
+                        share: 0.375,
+                        dail: 20,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 1,
+                        date: "1973-02-28",
+                        share: 0.0069444444444444,
+                        dail: 20,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1973-02-28",
+                        share: 0.0069444444444444,
+                        dail: 20,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 19,
+                        date: "1973-02-28",
+                        share: 0.1319444444444444,
+                        dail: 20,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1973-02-28",
+                        share: 0.0,
+                        dail: 20,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 84,
+                        date: "1977-06-16",
+                        share: 0.5675675675675675,
+                        dail: 21,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 43,
+                        date: "1977-06-16",
+                        share: 0.2905405405405405,
+                        dail: 21,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 3,
+                        date: "1977-06-16",
+                        share: 0.0202702702702702,
+                        dail: 21,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1977-06-16",
+                        share: 0.0067567567567567,
+                        dail: 21,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 17,
+                        date: "1977-06-16",
+                        share: 0.1148648648648648,
+                        dail: 21,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1977-06-16",
+                        share: 0.0,
+                        dail: 21,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 2,
+                        date: "1981-06-11",
+                        share: 0.0120481927710843,
+                        dail: 22,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 78,
+                        date: "1981-06-11",
+                        share: 0.4698795180722891,
+                        dail: 22,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 65,
+                        date: "1981-06-11",
+                        share: 0.3915662650602409,
+                        dail: 22,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 3,
+                        date: "1981-06-11",
+                        share: 0.0180722891566265,
+                        dail: 22,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1981-06-11",
+                        share: 0.0060240963855421,
+                        dail: 22,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 15,
+                        date: "1981-06-11",
+                        share: 0.0903614457831325,
+                        dail: 22,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 1,
+                        date: "1981-06-11",
+                        share: 0.0060240963855421,
+                        dail: 22,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 1,
+                        date: "1981-06-11",
+                        share: 0.0060240963855421,
+                        dail: 22,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1981-06-11",
+                        share: 0.0,
+                        dail: 22,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 1,
+                        date: "1982-02-18",
+                        share: 0.006060606060606,
+                        dail: 23,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 81,
+                        date: "1982-02-18",
+                        share: 0.4909090909090909,
+                        dail: 23,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 63,
+                        date: "1982-02-18",
+                        share: 0.3818181818181818,
+                        dail: 23,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 1,
+                        date: "1982-02-18",
+                        share: 0.006060606060606,
+                        dail: 23,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1982-02-18",
+                        share: 0.006060606060606,
+                        dail: 23,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 15,
+                        date: "1982-02-18",
+                        share: 0.0909090909090909,
+                        dail: 23,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 3,
+                        date: "1982-02-18",
+                        share: 0.0181818181818181,
+                        dail: 23,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1982-02-18",
+                        share: 0.0,
+                        dail: 23,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 75,
+                        date: "1982-11-24",
+                        share: 0.4518072289156626,
+                        dail: 24,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 70,
+                        date: "1982-11-24",
+                        share: 0.4216867469879518,
+                        dail: 24,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 2,
+                        date: "1982-11-24",
+                        share: 0.0120481927710843,
+                        dail: 24,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1982-11-24",
+                        share: 0.0060240963855421,
+                        dail: 24,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 16,
+                        date: "1982-11-24",
+                        share: 0.0963855421686747,
+                        dail: 24,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1982-11-24",
+                        share: 0.0,
+                        dail: 24,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 2,
+                        date: "1982-11-24",
+                        share: 0.0120481927710843,
+                        dail: 24,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 1,
+                        date: "1987-02-17",
+                        share: 0.0060240963855421,
+                        dail: 25,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 81,
+                        date: "1987-02-17",
+                        share: 0.4879518072289157,
+                        dail: 25,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 51,
+                        date: "1987-02-17",
+                        share: 0.3072289156626506,
+                        dail: 25,
+                    },
+                    {
+                        party: "Green",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 2,
+                        date: "1987-02-17",
+                        share: 0.0120481927710843,
+                        dail: 25,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1987-02-17",
+                        share: 0.0060240963855421,
+                        dail: 25,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 12,
+                        date: "1987-02-17",
+                        share: 0.072289156626506,
+                        dail: 25,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 14,
+                        date: "1987-02-17",
+                        share: 0.0843373493975903,
+                        dail: 25,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1987-02-17",
+                        share: 0.0,
+                        dail: 25,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 4,
+                        date: "1987-02-17",
+                        share: 0.0240963855421686,
+                        dail: 25,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 1,
+                        date: "1989-06-15",
+                        share: 0.0060240963855421,
+                        dail: 26,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 77,
+                        date: "1989-06-15",
+                        share: 0.463855421686747,
+                        dail: 26,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 55,
+                        date: "1989-06-15",
+                        share: 0.3313253012048193,
+                        dail: 26,
+                    },
+                    {
+                        party: "Green",
+                        seats: 1,
+                        date: "1989-06-15",
+                        share: 0.0060240963855421,
+                        dail: 26,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 3,
+                        date: "1989-06-15",
+                        share: 0.0180722891566265,
+                        dail: 26,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1989-06-15",
+                        share: 0.0060240963855421,
+                        dail: 26,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 15,
+                        date: "1989-06-15",
+                        share: 0.0903614457831325,
+                        dail: 26,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 6,
+                        date: "1989-06-15",
+                        share: 0.036144578313253,
+                        dail: 26,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1989-06-15",
+                        share: 0.0,
+                        dail: 26,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 7,
+                        date: "1989-06-15",
+                        share: 0.0421686746987951,
+                        dail: 26,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 4,
+                        date: "1992-11-25",
+                        share: 0.0240963855421686,
+                        dail: 27,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 68,
+                        date: "1992-11-25",
+                        share: 0.4096385542168674,
+                        dail: 27,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 45,
+                        date: "1992-11-25",
+                        share: 0.2710843373493976,
+                        dail: 27,
+                    },
+                    {
+                        party: "Green",
+                        seats: 1,
+                        date: "1992-11-25",
+                        share: 0.0060240963855421,
+                        dail: 27,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 4,
+                        date: "1992-11-25",
+                        share: 0.0240963855421686,
+                        dail: 27,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1992-11-25",
+                        share: 0.0060240963855421,
+                        dail: 27,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 33,
+                        date: "1992-11-25",
+                        share: 0.1987951807228915,
+                        dail: 27,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 10,
+                        date: "1992-11-25",
+                        share: 0.0602409638554216,
+                        dail: 27,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1992-11-25",
+                        share: 0.0,
+                        dail: 27,
+                    },
+                    {
+                        party: "Anti H-Block",
+                        seats: 0,
+                        date: "1997-06-06",
+                        share: 0.0,
+                        dail: 28,
+                    },
+                    {
+                        party: "Democratic Left",
+                        seats: 4,
+                        date: "1997-06-06",
+                        share: 0.0240963855421686,
+                        dail: 28,
+                    },
+                    {
+                        party: "Democratic Socialist",
+                        seats: 0,
+                        date: "1997-06-06",
+                        share: 0.0,
+                        dail: 28,
+                    },
+                    {
+                        party: "Fianna Fáil",
+                        seats: 77,
+                        date: "1997-06-06",
+                        share: 0.463855421686747,
+                        dail: 28,
+                    },
+                    {
+                        party: "Fine Gael",
+                        seats: 54,
+                        date: "1997-06-06",
+                        share: 0.3253012048192771,
+                        dail: 28,
+                    },
+                    {
+                        party: "Green",
+                        seats: 2,
+                        date: "1997-06-06",
+                        share: 0.0120481927710843,
+                        dail: 28,
+                    },
+                    {
+                        party: "Independent",
+                        seats: 5,
+                        date: "1997-06-06",
+                        share: 0.0301204819277108,
+                        dail: 28,
+                    },
+                    {
+                        party: "Independent Fianna Fáil",
+                        seats: 1,
+                        date: "1997-06-06",
+                        share: 0.0060240963855421,
+                        dail: 28,
+                    },
+                    {
+                        party: "Labour",
+                        seats: 17,
+                        date: "1997-06-06",
+                        share: 0.1024096385542168,
+                        dail: 28,
+                    },
+                    {
+                        party: "Progressive Democrats",
+                        seats: 4,
+                        date: "1997-06-06",
+                        share: 0.0240963855421686,
+                        dail: 28,
+                    },
+                    {
+                        party: "Sinn Féin",
+                        seats: 1,
+                        date: "1997-06-06",
+                        share: 0.0060240963855421,
+                        dail: 28,
+                    },
+                    {
+                        party: "Sinn Féin The Workers' Party",
+                        seats: 0,
+                        date: "1997-06-06",
+                        share: 0.0,
+                        dail: 28,
+                    },
+                    {
+                        party: "Socialist Labour",
+                        seats: 0,
+                        date: "1997-06-06",
+                        share: 0.0,
+                        dail: 28,
+                    },
+                    {
+                        party: "Socialist Party",
+                        seats: 1,
+                        date: "1997-06-06",
+                        share: 0.0060240963855421,
+                        dail: 28,
+                    },
+                    {
+                        party: "Workers' Party",
+                        seats: 0,
+                        date: "1997-06-06",
+                        share: 0.0,
+                        dail: 28,
+                    },
+                ];
+
+                results.forEach((d) => {
+                    d.date = new Date(d.date);
+                });
+
+                let partyColorer = {
+                    "AAA–PBP": "#FF0000",
+                    "Anti H-Block": "#8f8b8f",
+                    Aontú: "#FFA233",
+                    "Catholic Democrats": "#8f8b8f",
+                    "Communist Party of Ireland": "#8f8b8f",
+                    "Democratic Left": "#C41E3A",
+                    "Democratic Socialist": "#ff0000",
+                    "Direct Democracy Ireland": "#8f8b8f",
+                    "Fianna Fáil": "#4CBB17",
+                    "Fine Gael": "#0000FF",
+                    "Fís Nua": "#8f8b8f",
+                    Green: "#7CFC00",
+                    "Green Party/ Comhaontas Glas": "#7CFC00",
+                    Independent: "#1d1e3b",
+                    "Independent Fianna Fáil": "#8f8b8f",
+                    "Independent Ireland": "#66eded",
+                    "Independents 4 Change": "#8f8b8f",
+                    "Irish Democratic Party": "#8f8b8f",
+                    "Irish Freedom Party": "#8f8b8f",
+                    Labour: "#C41E3A",
+                    "Non-Party": "#1d1e3b",
+                    "People Before Profit": "#FF0000",
+                    "Progressive Democrats": "#4682B4",
+                    Renua: "#FCFF33",
+                    "Renua Ireland": "#FCFF33",
+                    "Right to Change": "#8f8b8f",
+                    "Sinn Féin": "#93C572",
+                    "Sinn Féin The Workers' Party": "#8f8b8f",
+                    "Social Democrats": "#d52cde",
+                    "Socialist Labour": "#FF0000",
+                    "Socialist Party": "#FF0000",
+                    "Solidarity - People Before Profit": "#FF0000",
+                    "Solidarity–PBP": "#FF0000",
+                    "The Irish Party": "#8f8b8f",
+                    "The Labour Party": "#C41E3A",
+                    "The National Party - An Páirtí Náisiúnta": "#8f8b8f",
+                    "United People": "#8f8b8f",
+                    "Workers Party": "#8f8b8f",
+                    "Workers and Unemployed": "#8f8b8f",
+                    "Workers' Party": "#8f8b8f",
+                };
+
+                let legendLabeller = {
+                    "Fianna Fáil": "Fianna Fáil",
+                    "Fine Gael": "Fine Gael",
+                    Labour: "Labour",
+                    Independent: "Independent",
+                    "Sinn Féin": "Sinn Féin",
+                    "Progressive Democrats": "PDs",
+                    Green: "Green",
+                    "Workers' Party": "Workers Party",
+                    "Solidarity–PBP": "Sol–PBP",
+                    "Independent Fianna Fáil": "Ind FF",
+                    "Social Democrats": "Soc Dems",
+                    "Democratic Left": "Dem Left",
+                    "Independents 4 Change": "Ind 4 Change",
+                    "Sinn Féin The Workers' Party": "SF Workers Party",
+                    "Socialist Party": "Soc Party",
+                    "Democratic Socialist": "Dem Soc",
+                    "People Before Profit": "PBP",
+                    "Anti H-Block": "Anti H-Block",
+                    Aontú: "Aontú",
+                    "Socialist Labour": "Soc Lab",
+                    "Workers and Unemployed": "WAU",
+                };
+
+                let dateformatter = d3.timeFormat("%b %d, %y");
+                let percentageFormatter = d3.format(".1%");
+
+                // CREATE xticks TO USE AS X-AXIS VALUES
+                let xvalues = new Set(
+                    results.map((d) => dateformatter(d.date)),
+                );
+                let xticks = [];
+                xvalues.forEach((x) => {
+                    xticks.push(new Date(x));
+                });
+
+                // CREATE THE `stacked_data` OBJECT
+                const stacked_data = d3
+                    .stack()
+                    .offset(d3.stackOffsetExpand)
+                    .order(d3.stackOrderInsideOut)
+                    .keys(d3.union(results.map((d) => d.party)))
+                    .value(([, D], key) => D.get(key).seats)(
+                    d3.index(
+                        results,
+                        (d) => d.date,
+                        (d) => d.party,
+                    ),
+                );
+
+                // SET THE DIMENSIONS
+                const width = 1000;
+                const height = 500;
+
+                const margin = {
+                    top: 75,
+                    bottom: 100,
+                    left: 75,
+                    right: 20,
+                };
+
+                const plot_height = height - margin.top - margin.bottom;
+                const plot_width = width - margin.left - margin.right;
+
+                // CREATE THE `canvas`
+                var canvas = d3
+                    .select("#canvas")
+                    .append("svg")
+                    .style("background", "aliceblue")
+                    .attr("height", height)
+                    .attr("width", width);
+
+                // CREATE THE `plot`
+                var plot = canvas
+                    .append("g")
+                    .attr(
+                        "transform",
+                        "translate(" + margin.left + "," + margin.top + ")",
+                    );
+
+                // CREATE THE X-SCALE
+                scaleX = d3
+                    .scaleUtc()
+                    .domain(d3.extent(results, (d) => d.date))
+                    .range([0, plot_width]);
+
+                // CREATE THE Y-SCALE
+                scaleY = d3
+                    .scaleLinear()
+                    .domain([
+                        0,
+                        d3.max(stacked_data, (d) => d3.max(d, (d) => d[1])),
+                    ])
+                    .rangeRound([plot_height, 0]);
+
+                // CREATE THE `area` AREA FUNCTION THAT DRAWS THE DATA
+                const area = d3
+                    .area()
+                    .x((d) => scaleX(d.data[0]))
+                    .y0((d) => scaleY(d[0]))
+                    .y1((d) => scaleY(d[1]));
+
+                const streamgraph = plot
+                    .append("g")
+                    .selectAll()
+                    .data(stacked_data)
+                    .join("path")
+                    .attr("fill", (d) => partyColorer[d.key])
+                    .attr("d", area);
+
+                // AXES
+                let xAx = d3.axisBottom(scaleX);
+                let yAx = d3.axisLeft(scaleY);
+
+                let xaxis = plot
+                    .append("g")
+                    .attr("transform", `translate(0, ${plot_height})`)
+                    .attr("class", "axes")
+                    .call(xAx.tickFormat(dateformatter).tickValues(xticks));
+
+                xaxis
+                    .selectAll("text")
+                    .attr("transform", "translate(-10,10)rotate(-45)")
+                    .style("text-anchor", "end");
+
+                let yaxis = plot
+                    .append("g")
+                    .attr("transform", "translate(0, 0)")
+                    .attr("class", "axes")
+                    .call(yAx.tickFormat(percentageFormatter));
+
+                // AXIS LABELS
+                plot.append("g")
+                    .append("text")
+                    .attr("class", "axisLabel")
+                    .attr("x", plot_width)
+                    .attr("y", plot_height + margin.bottom * 0.75)
+                    .text("Election Date");
+
+                plot.append("g")
+                    .append("text")
+                    .attr("class", "axisLabel")
+                    .attr("x", 0)
+                    .attr("y", -(margin.left * 0.75))
+                    .attr("transform", "rotate(-90)")
+                    .text("Share of Seats");
+
+                // LEGEND
+                //
+                const legends = canvas.append("g").attr("class", "legend");
+
+                let parties = new Set(results.map((d) => d.party));
+
+                legends
+                    .selectAll("legend")
+                    .data(parties) // a convenience array
+                    .enter()
+                    .append("text")
+                    .attr("class", "legend-label")
+                    .attr("x", (d, i) => {
+                        if (i < 7) {
+                            return margin.left + i * 135;
+                        } else if (i < 14) {
+                            return margin.left + (i - 7) * 135;
+                        } else {
+                            return margin.left + (i - 14) * 135;
+                        }
+                    })
+                    .attr("y", (d, i) => {
+                        if (i < 7) {
+                            return 20;
+                        } else if (i < 14) {
+                            return 45;
+                        } else {
+                            return 65;
+                        }
+                    })
+                    .text((d) => legendLabeller[d])
+                    .style("fill", (d) => {
+                        return partyColorer[d];
+                    });
+
+                var tooltip = d3
+                    .select("body")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                streamgraph
+                    .on("mouseover", function (e, d) {
+                        tooltip.transition().duration(50).style("opacity", 0.9);
+                        tooltip
+                            .style("left", e.pageX + "px")
+                            .style("top", e.pageY + "px")
+                            .html(d.key);
+                    })
+                    .on("mouseout", function (e, d) {
+                        tooltip.transition().duration(50).style("opacity", 0);
+                    });
+            };
+        </script>
+    </head>
+
+    <body onload="draw()">
+        <h2></h2>
+        <h3></h3>
+        <div id="canvas"></div>
+    </body>
+</html>
